@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { InnerBox, OuterBox } from '../Styles/BaseStyles';
+import { InnerBox, OuterBox, Button} from '../Styles/BaseStyles';
 
 interface Props{
 //whatever props is needed will be put here like text:String
@@ -17,6 +17,11 @@ function FrontPageView(props:Props){
             <InnerBox>
                 <div>However, objects placed inside the main container will be put in a column.</div>
             </InnerBox>
+
+            <p>Click the button below to water the plant</p>
+
+            <Button>Squirt</Button>
+            
 
            </OuterBox>
 }
