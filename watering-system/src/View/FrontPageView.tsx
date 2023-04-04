@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 import { InnerBox, OuterBox } from '../Styles/BaseStyles';
 
+interface Props{
+//whatever props is needed will be put here like text:String
+}
 
-function FrontPageView(){
+
+function FrontPageView(props:Props){
     return <OuterBox>This is the main container.
 
             <InnerBox>
