@@ -45,7 +45,7 @@ module.exports = {
   Email: {
     type: 'string',
     format: 'email',
-    example: 'denhad@kth.se',
+    example: 'lulars@kth.se',
   },
   Uuid: {
     type: 'string',
