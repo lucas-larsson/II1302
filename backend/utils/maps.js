@@ -1,6 +1,6 @@
 const roleMap = {
-  recruiter: 1,
-  applicant: 2,
+  admin: 1,
+  user: 2,
 };
 
 module.exports = {

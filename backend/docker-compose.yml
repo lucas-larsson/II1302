@@ -2,7 +2,7 @@
 services:
   backend:
     image: node:latest
-    container_name: IV1201_backend
+    container_name: II1302_backend
     volumes:
       - .:/usr/src/app
     working_dir: /usr/src/app
@@ -19,7 +19,7 @@ services:
 
   database:
     image: postgres:alpine
-    container_name: IV1201_postgres
+    container_name: II1302_postgres
     ports:
       - '$POSTGRES_PORT:$POSTGRES_PORT'
     volumes:

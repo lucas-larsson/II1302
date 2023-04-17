@@ -4,10 +4,10 @@ module.exports = {
 };
 
 module.exports.get.apiDoc = {
-	tags: ['errorcodes'],
+	tags: ['error-codes'],
 	responses: {
 		200: {
-			description: 'Successfully fecthed all error codes',
+			description: 'Successfully fetched all error codes',
 			content: {
 				'application/json': {
 					schema: {
