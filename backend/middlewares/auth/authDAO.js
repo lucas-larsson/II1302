@@ -12,7 +12,7 @@ const createUser = async (user) => {
       user.email,
       user.username,
       user.password,
-      roleMap.applicant,
+      roleMap.user,
     ]);
     return result.rows[0];
   } catch (err) {
