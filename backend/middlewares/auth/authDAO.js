@@ -2,15 +2,13 @@ const { sendQuery } = require('../../utils/dbIntegration/dbConfig'),
   { roleMap } = require('../../utils/maps');
 
 const createUser = async (user) => {
-  const query = `INSERT INTO person (name, surname, pnr, email, username, password, role_id) 
-    VALUES ($1, $2, $3, $4, $5, crypt($6, 'password'), $7) RETURNING name, surname, pnr, email, username, role_id, person_id`;
+  const query = `INSERT INTO person (name, surname, email, password, role_id) 
+    VALUES ($1, $2, $3, $4, $5, crypt($6, 'password'), $7) RETURNING name, surname, email, role_id, person_id`;
   try {
     const result = await sendQuery(query, [
       user.name,
       user.surname,
-      user.pnr,
       user.email,
-      user.username,
       user.password,
       roleMap.user,
     ]);
@@ -22,8 +20,8 @@ const createUser = async (user) => {
 
 const getUser = async (username, password = null) => {
   const query = password
-    ? `SELECT person_id, name, surname, pnr, email, username, role_id FROM person WHERE username = $1 AND password = crypt($2, 'password')`
-    : `SELECT person_id, name, surname, pnr, email, username, role_id FROM person WHERE username = $1`;
+    ? `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1 AND password = crypt($2, 'password')`
+    : `SELECT person_id, name, surname, email, role_id FROM person WHERE username = $1`;
   const queryParams = password ? [username, password] : [username];
   try {
     const result = await sendQuery(query, queryParams);
@@ -74,10 +72,10 @@ const deleteSession = async (session_id) => {
     throw err;
   }
 };
-const checkIfUserExists = async (username) => {
-  const query = `SELECT person_id FROM person WHERE username = $1`;
+const checkIfUserExists = async (email) => {
+  const query = `SELECT person_id FROM person WHERE email = $1`;
   try {
-    const result = await sendQuery(query, [username]);
+    const result = await sendQuery(query, [email]);
     return !!result.rows[0];
   } catch (err) {
     throw err;
