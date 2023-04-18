@@ -14,7 +14,7 @@ module.exports.post.apiDoc = {
   tags: ['auth'],
   requestBody: {
     required: true,
-    description: 'Logg in',
+    description: 'Log in',
     content: {
       'application/json': {
         schema: {
