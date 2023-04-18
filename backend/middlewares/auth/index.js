@@ -224,9 +224,9 @@ const checkIfSessionExists = async (req, res, next) => {
  * @param next - This is a function that is called when the middleware is complete.
  */
 const checkIfUserExists = async (req, res, next) => {
-  const { username } = req.body || req.headers;
+  const { email } = req.body || req.headers;
   try {
-    res.locals.userExists = await authDAO.checkIfUserExists(username);
+    res.locals.userExists = await authDAO.checkIfUserExists(email);
     next();
   } catch (err) {
     console.error('Error in checkIfUserExists: ', err.message);

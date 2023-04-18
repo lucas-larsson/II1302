@@ -100,7 +100,7 @@ module.exports = {
   SignUpData: {
     type: 'object',
     additionalProperties: false,
-    required: ['name', 'surname', 'pnr', 'email', 'username', 'password'],
+    required: ['name', 'surname', 'email', 'password'],
     properties: {
       name: {
         type: 'string',
@@ -114,17 +114,8 @@ module.exports = {
         minimum: 1,
         maximum: 255,
       },
-      pnr: {
-        $ref: '#/components/schemas/PersonalNumber',
-      },
       email: {
         $ref: '#/components/schemas/Email',
-      },
-      username: {
-        type: 'string',
-        example: 'johndoe',
-        minimum: 1,
-        maximum: 255,
       },
       password: {
         type: 'string',
