@@ -20,8 +20,8 @@ const createUser = async (user) => {
 
 const getUser = async (username, password = null) => {
   const query = password
-    ? `SELECT person_id, name, surname, pnr, email, username, role_id FROM person WHERE username = $1 AND password = crypt($2, 'password')`
-    : `SELECT person_id, name, surname, pnr, email, username, role_id FROM person WHERE username = $1`;
+    ? `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1 AND password = crypt($2, 'password')`
+    : `SELECT person_id, name, surname, email, role_id FROM person WHERE username = $1`;
   const queryParams = password ? [username, password] : [username];
   try {
     const result = await sendQuery(query, queryParams);
