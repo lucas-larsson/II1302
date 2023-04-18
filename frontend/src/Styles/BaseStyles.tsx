@@ -7,7 +7,7 @@ const OuterBox = styled.div`
   justify-content: center;
   height: 90%;
   width: 90%
-  padding: 10px;
+  padding: 8px;
   margin: 3px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 `;
