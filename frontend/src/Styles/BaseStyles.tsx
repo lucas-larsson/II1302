@@ -10,6 +10,8 @@ const OuterBox = styled.div`
   padding: 10px;
   margin: 3px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 40px;
+  backdrop-filter: blur(2px);
 `;
 
 const InnerBox = styled.div`
@@ -40,7 +42,7 @@ const Button = styled.button`
   }
 `;
 
-const Login_Signup_box = styled.div`
+const Controller = styled.div`
 
 `;
 
