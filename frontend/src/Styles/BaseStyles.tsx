@@ -40,5 +40,9 @@ const Button = styled.button`
   }
 `;
 
+const Login_Signup_box = styled.div`
+
+`;
+
 
 export {OuterBox, InnerBox, Button};
