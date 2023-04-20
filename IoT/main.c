@@ -5,7 +5,7 @@ const char* ssid = "eduroam";
 const char* password = "5dMZmVnhs";
 
 //Your Domain name with URL path or IP address with path
-const char* serverName = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/data";
+const char* serverName = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update/";
 
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
@@ -53,6 +53,8 @@ void loop()
       // Data to send with HTTP POST
       String httpRequestData = "api_key=tPmAT5Ab3j7F9&sensor=BME280&value1=24.25&value2=49.54&value3=1005.14";           
       // Send HTTP POST request
+      // TODO: Change to POST request
+      // Here we are using the HTTP POST method to send the data to the server, so maybe just collect the data and send it each 15 minutes?
       int httpResponseCode = http.POST(httpRequestData);
       
       // If you need an HTTP request with a content type: application/json, use the following:
