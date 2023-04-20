@@ -88,7 +88,7 @@ const getUser = async (req, res, next) => {
       return next(
         errorCodes.unauthorized({
           req,
-          message: `User with username: ${email} not found`,
+          message: `User with Email: ${email} not found`,
         })
       );
     }
