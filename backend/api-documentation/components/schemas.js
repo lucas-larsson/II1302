@@ -119,11 +119,11 @@ module.exports = {
   LoginData: {
     type: 'object',
     additionalProperties: false,
-    required: ['username', 'password'],
+    required: ['email', 'password'],
     properties: {
-      username: {
+      email: {
         type: 'string',
-        example: 'johndoe',
+        example: 'lulars@kth.se',
         minimum: 1,
         maximum: 255,
       },
