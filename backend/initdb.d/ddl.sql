@@ -45,8 +45,8 @@ create table public.iot_auth
             primary key
         constraint iot_auth_person_person_id_fk
             references public.person,
-    device_id     varchar not null,
-    device_password varchar
+    user_name     varchar not null,
+    user_password varchar
 );
 
 alter table public.iot_auth
