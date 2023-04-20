@@ -21,13 +21,19 @@ jobs:
       - name: Install dependencies
         run: |
           pwd
+          ls
           cd frontend # Replace with the path to your frontend project directory
+          pwd
+          ls
           npm ci
 
       - name: Build
         run: |
           pwd
+          ls
           cd frontend # Replace with the path to your frontend project directory
+          pwd
+          ls
           npm run build
 
       - name: Deploy to Firebase Hosting
