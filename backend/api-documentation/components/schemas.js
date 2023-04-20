@@ -119,11 +119,11 @@ module.exports = {
   LoginData: {
     type: 'object',
     additionalProperties: false,
-    required: ['username', 'password'],
+    required: ['email', 'password'],
     properties: {
-      username: {
+      email: {
         type: 'string',
-        example: 'johndoe',
+        example: 'lulars@kth.se',
         minimum: 1,
         maximum: 255,
       },
@@ -207,6 +207,84 @@ module.exports = {
             $ref: '#/components/schemas/GenericId',
           },
         },
+      },
+    },
+  },
+  UpdatePlantData: {
+    type: 'object',
+    additionalProperties: false,
+    required: [
+      'name',
+      'description',
+      'watering_interval',
+      'last_watered',
+      'iot_device_id',
+      'iot_device_password',
+    ],
+    properties: {
+      name: {
+        type: 'string',
+        example: 'kaktus',
+        minimum: 1,
+        maximum: 255,
+      },
+      description: {
+        type: 'string',
+        example: 'en kaktus',
+        minimum: 1,
+        maximum: 255,
+      },
+      watering_interval: {
+        type: 'integer',
+        example: 7,
+        minimum: 1,
+        maximum: 255,
+      },
+      last_watered: {
+        $ref: '#/components/schemas/DateTime',
+      },
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      iot_device_password: {
+        type: 'string',
+        example: 'password',
+        minimum: 1,
+        maximum: 255,
+      },
+    },
+  },
+  Plant: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['name', 'description', 'watering_interval', 'last_watered'],
+    properties: {
+      name: {
+        type: 'string',
+        example: 'kaktus',
+        minimum: 1,
+        maximum: 255,
+      },
+      description: {
+        type: 'string',
+        example: 'en kaktus',
+        minimum: 1,
+        maximum: 255,
+      },
+      watering_interval: {
+        type: 'integer',
+        example: 7,
+        minimum: 1,
+        maximum: 255,
+      },
+      last_watered: {
+        $ref: '#/components/schemas/DateTime',
+      },
+      plant_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
       },
     },
   },

@@ -3,7 +3,7 @@ const { sendQuery } = require('../../utils/dbIntegration/dbConfig'),
 
 const createUser = async (user) => {
   const query = `INSERT INTO person (name, surname, email, password, role_id) 
-    VALUES ($1, $2, $3, $4, $5, crypt($6, 'password'), $7) RETURNING name, surname, email, role_id, person_id`;
+    VALUES ($1, $2, $3 crypt($4, 'password'), $5) RETURNING name, surname, email, role_id, person_id`;
   try {
     const result = await sendQuery(query, [
       user.name,
@@ -18,11 +18,11 @@ const createUser = async (user) => {
   }
 };
 
-const getUser = async (username, password = null) => {
+const getUser = async (email, password = null) => {
   const query = password
-    ? `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1 AND password = crypt($2, 'password')`
-    : `SELECT person_id, name, surname, email, role_id FROM person WHERE username = $1`;
-  const queryParams = password ? [username, password] : [username];
+    ? `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1 AND password = $2`
+    : `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1`;
+  const queryParams = password ? [email, password] : [email];
   try {
     const result = await sendQuery(query, queryParams);
     return result.rows;
@@ -32,7 +32,7 @@ const getUser = async (username, password = null) => {
 };
 
 const getUserById = async (person_id) => {
-  const query = `SELECT person_id, name, surname, pnr, email, username, role_id FROM person WHERE person_id = $1`;
+  const query = `SELECT person_id, name, surname, email, role_id FROM person WHERE person_id = $1`;
   try {
     const result = await sendQuery(query, [person_id]);
     return result.rows;
