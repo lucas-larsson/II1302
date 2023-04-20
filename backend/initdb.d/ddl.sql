@@ -1,54 +1,44 @@
-create table public.role
+-- we don't know how to generate root <with-no-name> (class Root) :(
+create table role
 (
     role_id integer generated always as identity
         primary key,
     name    varchar(255)
 );
 
-alter table public.role
+alter table role
     owner to postgres;
 
-create table public.person
+create table person
 (
     person_id integer generated always as identity
         primary key,
     name      varchar(255),
     surname   varchar(255),
+    pnr       varchar(255),
     email     varchar(255)
         constraint constraint_name
             unique,
     password  varchar(255),
     role_id   integer
-        references public.role
+        references role,
+    username  varchar(255)
+        unique
 );
 
-alter table public.person
+alter table person
     owner to postgres;
 
-create table public.sessions
+create table sessions
 (
     session_id      uuid default gen_random_uuid() not null
         constraint sessions_pk
             primary key,
     person_id       integer
-        references public.person,
+        references person,
     expiration_date timestamp
 );
 
-alter table public.sessions
-    owner to postgres;
-
-create table public.iot_auth
-(
-    id            integer not null
-        constraint iot_auth_pk
-            primary key
-        constraint iot_auth_person_person_id_fk
-            references public.person,
-    user_name     varchar not null,
-    user_password varchar
-);
-
-alter table public.iot_auth
+alter table sessions
     owner to postgres;
 
