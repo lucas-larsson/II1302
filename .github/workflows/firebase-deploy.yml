@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd frontend # Replace with the path to your frontend project directory
-          npm ci
+          npm ci 
 
       - name: Build
         run: |
