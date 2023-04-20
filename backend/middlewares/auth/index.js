@@ -72,7 +72,7 @@ const createUser = async (req, res, next) => {
 };
 
 /**
- * It takes in an email and password from the request body, and then uses the authDAO to get the user
+ * It takes in a username and password from the request body, and then uses the authDAO to get the user
  * from the database. If the user is not found, it returns a 401 error. If the user is found, it sets
  * the user in the response locals and calls next
  * @param req - The request object
@@ -81,14 +81,14 @@ const createUser = async (req, res, next) => {
  * @returns The user object is being returned.
  */
 const getUser = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
   try {
-    const result = await authDAO.getUser(email, password);
+    const result = await authDAO.getUser(username, password);
     if (result.length === 0) {
       return next(
         errorCodes.unauthorized({
           req,
-          message: `User with username: ${email} not found`,
+          message: `User with username: ${username} not found`,
         })
       );
     }
@@ -198,9 +198,9 @@ const deleteSession = async (req, res, next) => {
  * @returns a function that is being used as middleware.
  */
 const checkIfSessionExists = async (req, res, next) => {
-  const { person_id, session_id } = req.headers;
+  const { session_id } = req.headers;
   try {
-    const result = await authDAO.getSession(person_id, session_id);
+    const result = await authDAO.getSession(session_id);
     if (result.length === 0) {
       return next(
         errorCodes.unauthorized({

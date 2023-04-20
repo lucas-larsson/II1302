@@ -18,11 +18,11 @@ const createUser = async (user) => {
   }
 };
 
-const getUser = async (email, password = null) => {
+const getUser = async (username, password = null) => {
   const query = password
-    ? `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1 AND password = $2`
-    : `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1`;
-  const queryParams = password ? [email, password] : [email];
+    ? `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1 AND password = crypt($2, 'password')`
+    : `SELECT person_id, name, surname, email, role_id FROM person WHERE username = $1`;
+  const queryParams = password ? [username, password] : [username];
   try {
     const result = await sendQuery(query, queryParams);
     return result.rows;
@@ -32,7 +32,7 @@ const getUser = async (email, password = null) => {
 };
 
 const getUserById = async (person_id) => {
-  const query = `SELECT person_id, name, surname, email, role_id FROM person WHERE person_id = $1`;
+  const query = `SELECT person_id, name, surname, pnr, email, username, role_id FROM person WHERE person_id = $1`;
   try {
     const result = await sendQuery(query, [person_id]);
     return result.rows;
