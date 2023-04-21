@@ -72,16 +72,16 @@ border: none;
 const Slider = styled.input`
 -webkit-appearance: none;
 width: 100%;
-height: 20px;
-border-radius: 0px;
+height: 40px;
+border-radius: 30px;
 background-color: #0077cc;
 outline: none;
 &::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 0px;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
   background-color: #234F1E;
   cursor: pointer;
 `;
