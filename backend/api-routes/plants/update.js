@@ -1,24 +1,24 @@
-const auth = require('../middlewares/auth'),
-  responseMiddleware = require('../middlewares/response');
+const plants = require('../../middlewares/plants'),
+  responseMiddleware = require('../../middlewares/response');
 
 module.exports = {
   post: [
-    auth.initLocals,
-    auth.getUser,
-    auth.createSession,
+    plants.initLocals,
+    plants.authorizeIOT,
+    plants.updatePlantData,
     responseMiddleware.sendResponse(200, 'outData'),
   ],
 };
 
 module.exports.post.apiDoc = {
-  tags: ['auth'],
+  tags: ['plants'],
   requestBody: {
     required: true,
-    description: 'Log in',
+    description: 'updates plant data',
     content: {
       'application/json': {
         schema: {
-          $ref: '#/components/schemas/LoginData',
+          $ref: '#/components/schemas/UpdatePlantData',
         },
       },
     },
@@ -29,11 +29,10 @@ module.exports.post.apiDoc = {
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/UserAndSession',
+            $ref: '#/components/schemas/Plant',
           },
         },
       },
     },
   },
 };
-
