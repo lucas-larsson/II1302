@@ -12,15 +12,13 @@ function FrontPageView(props: Props) {
       <Text />
       <InnerBox>
         <div>
-          Objects placed inside these inner containers will be put on a row.
+          Text here
         </div>
-        <div>Like this.</div>
       </InnerBox>
 
       <InnerBox>
         <div>
-          However, objects placed inside the main container will be put in a
-          column.
+          And here
         </div>
       </InnerBox>
 
