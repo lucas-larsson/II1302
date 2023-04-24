@@ -10,6 +10,8 @@ const OuterBox = styled.div`
   padding: 10px;
   margin: 3px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 40px;
+  backdrop-filter: blur(2px);
 `;
 
 const InnerBox = styled.div`
@@ -40,5 +42,49 @@ const Button = styled.button`
   }
 `;
 
+const RedButton = styled.div`
+background-color: #BF0A30; /* Red */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px;
+  border-radius: 90px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 
-export {OuterBox, InnerBox, Button};
+  &:hover {
+    background-color: #800000;
+  }
+`;
+
+const Input = styled.input`
+padding: 0.5em;
+margin: 0.5em;
+background: #FFFFFF;
+border-radius: 10px;
+border: none;
+`;
+
+const Slider = styled.input`
+-webkit-appearance: none;
+width: 100%;
+height: 40px;
+border-radius: 30px;
+background-color: #0077cc;
+outline: none;
+&::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: #234F1E;
+  cursor: pointer;
+`;
+
+
+export {OuterBox, InnerBox, Button, RedButton, Input, Slider};
