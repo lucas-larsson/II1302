@@ -1,32 +1,91 @@
-import React from 'react';
-import { BrowserRouter as Router, Link, Routes, Route } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Link, Routes, Route , useNavigate} from 'react-router-dom';
+import styled from 'styled-components';
 import FrontPagePresenter from './Presenter/FrontPagePresenter';
 import UserSignInPresenter from './Presenter/UserSignInPresenter';
 import UserSignUpPresenter from './Presenter/UserSignUpPresenter';
+import UserProfilePresenter from './Presenter/UserProfilePresenter';
+import UserSignOutPresenter from './Presenter/UserSignOutPresenter';
+import { Nav, NavList, NavItem } from './Styles/NavStyles';
+import { Button, InnerBox, Title } from './Styles/BaseStyles';
+import MainPageAuthPresenter from './Presenter/MainPageAuthPresenter';
+import { ReactComponent as Ripple } from './Icons/ripple.svg';
+
+
+const NavLink = styled(Link)`
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    color: #f0f3bd;
+  }
+`;
+
 
 function App() {
+  const [isLoggedInTest, toggleLoginTest] = useState<Boolean>(false);
+
+  function testLogin() {
+    toggleLoginTest(!isLoggedInTest);
+  }
+
   return (
     <Router>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/SignIn">Sign In</Link>
-          </li>
-          <li>
-            <Link to="/SignUp">Sign Up</Link>
-          </li>
-        </ul>
-      </nav>
-      <div className="App">
+      <Nav>
+        {isLoggedInTest ? (
+          <NavLink onClick={testLogin} to={"/"}>Test Log-out</NavLink>
+        ) : (
+          <NavLink onClick={testLogin} to={"/"}>Test Log-in</NavLink>
+        )}
+
+        <NavLink to="/"><InnerBox><Ripple width={30} height={30}></Ripple> Home</InnerBox></NavLink>
+        
+          {isLoggedInTest ? 
+          
+          <NavList>
+            <NavItem>
+              <NavLink to="/SignOut">Sign Out</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink to="/Profile">Profile</NavLink>
+            </NavItem>
+          </NavList>
+          :
+          (
+            <NavList>
+            <NavItem>
+              <NavLink to="/SignIn">Sign In</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink to="/SignUp">Sign Up</NavLink>
+            </NavItem>
+            </NavList>
+          )
+          }
+          
+        
+      </Nav>
+
+      <Title>H2Oasis</Title>
+      {isLoggedInTest ? (
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<FrontPagePresenter />} />
+            <Route path="/SignOut" element={<UserSignOutPresenter />} />
+            <Route path="/Profile" element={<UserProfilePresenter />} />
+          </Routes>
+        </div>
+      ) : (
         <Routes>
-          <Route path="/" element={<FrontPagePresenter />} />
-          <Route path="/SignIn" element={<UserSignInPresenter />} />
-          <Route path="/SignUp" element={<UserSignUpPresenter />} />
+            <Route path="/" element={<MainPageAuthPresenter />} />
+            <Route path="/SignIn" element={<UserSignInPresenter />} />
+            <Route path="/SignUp" element={<UserSignUpPresenter />} />
         </Routes>
-      </div>
+
+      )}
     </Router>
   );
 }
