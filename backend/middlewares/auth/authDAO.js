@@ -3,7 +3,7 @@ const { sendQuery } = require('../../utils/dbIntegration/dbConfig'),
 
 const createUser = async (user) => {
   const query = `INSERT INTO person (name, surname, email, password, role_id) 
-    VALUES ($1, $2, $3 crypt($4, 'password'), $5) RETURNING name, surname, email, role_id, person_id`;
+    VALUES ($1, $2, $3 , crypt($4, 'password'), $5) RETURNING name, surname, email, role_id, person_id`;
   try {
     const result = await sendQuery(query, [
       user.name,
@@ -20,7 +20,7 @@ const createUser = async (user) => {
 
 const getUser = async (email, password = null) => {
   const query = password
-    ? `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1 AND password = $2`
+    ? `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1 AND password = crypt($2, 'password')`
     : `SELECT person_id, name, surname, email, role_id FROM person WHERE email = $1`;
   const queryParams = password ? [email, password] : [email];
   try {

@@ -1,4 +1,4 @@
-const { errorCodes } = require('../errorCodes');
+const { errorCodes } = require('../errorcodes');
 const { plantsDAO } = require('./plantsDAO');
 const { postRequest } = require('../request');
 
@@ -10,8 +10,9 @@ const initLocals = (req, res, next) => {
 const authorizeIOT = async (req, res, next) => {
   const { iothub_device_id, iothub_device_password } = req.body;
   if (iothub_device_id && iothub_device_password) {
-    const iotExists = await plantsDAO.iotExists(iothub_device_id, iothub_device_password);
-    if (iotExists) {
+    const plant = await plantsDAO.iotExists(iothub_device_id, iothub_device_password);
+    if (!!plant) {
+      res.locals.plant = plant;
       return next();
     } else {
       return next(
@@ -25,18 +26,28 @@ const authorizeIOT = async (req, res, next) => {
 };
 
 const updatePlantData = async (req, res, next) => {
-  console.log(`plant data has been updated`);
-  // const { iothub_device_id  } = req.body;
-  res.locals.plant = await plantsDAO.updatePlantData(iothub_device_id);
-  next();
+  const { device_id } = res.locals.plant;
+  try {
+    res.locals.plant = await plantsDAO.updatePlantData(device_id);
+    console.log(`plant data has been updated`);
+    next();
+  } catch (err) {
+    console.error('Error in updatePlantData: ', err.message);
+    return next(
+      errorCodes.serverError({
+        req,
+        message: 'Could not update plant data',
+      })
+    );
+  }
 };
 
 const waterPlant = async (req, res, next) => {
-  console.log(`plant has been watered`);
+  const { device_id } = res.locals.plant;
   try {
     const response = await postRequest(true);
     if (response === 'success') {
-      await plantsDAO.waterPlant();
+      await plantsDAO.waterPlant(device_id);
       next();
     }
   } catch (err) {

@@ -1,11 +1,10 @@
 const plants = require('../../middlewares/plants'),
-  auth = require('../../middlewares/auth'),
   responseMiddleware = require('../../middlewares/response');
 
 module.exports = {
   post: [
     plants.initLocals,
-    auth.authorize,
+    plants.authorizeIOT,
     plants.waterPlant,
     responseMiddleware.sendResponse(200, 'outData'),
   ],
@@ -26,7 +25,7 @@ module.exports.post.apiDoc = {
   },
   responses: {
     200: {
-      description: 'Successfully logged in',
+      description: 'Successfully watered plant',
       content: {
         'application/json': {
           schema: {
