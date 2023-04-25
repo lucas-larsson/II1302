@@ -1,4 +1,4 @@
-const { errorCodes } = require('../errorCodes');
+const { errorCodes } = require('../errorcodes');
 const { plantsDAO } = require('./plantsDAO');
 const { postRequest } = require('../request');
 
