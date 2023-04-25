@@ -12,7 +12,7 @@ export default function MainPageAuthView() {
       <Text>
         Fine tune specific parameters for optimal growth and overall wellness.
       </Text>
-      <Text>You must sign up or sign in to continue.</Text>
+      <Text><b>You must sign up or sign in to continue.</b></Text>
     </OuterBox>
   );
 }
