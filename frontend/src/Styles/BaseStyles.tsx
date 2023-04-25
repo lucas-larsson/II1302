@@ -31,6 +31,7 @@ const Title = styled.h1`
   margin: 2rem;
   padding: 8px;
 `;
+
 const Text = styled.p`
   font-size: 20px;
   text-align: center;
@@ -85,7 +86,7 @@ const Input = styled.input`
   margin: 0.5em;
   background: #ffffff;
   border-radius: 10px;
-  border: none;
+  border: 1px solid #2a9d8f;
 `;
 
 const Slider = styled.input`

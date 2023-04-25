@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Link, Routes, Route , useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import FrontPagePresenter from './Presenter/FrontPagePresenter';
-import UserSignInPresenter from './Presenter/UserLogInPresenter';
+import UserLogInPresenter from './Presenter/UserLogInPresenter';
 import UserSignUpPresenter from './Presenter/UserSignUpPresenter';
 import UserProfilePresenter from './Presenter/UserProfilePresenter';
 import UserSignOutPresenter from './Presenter/UserLogOutPresenter';
@@ -79,7 +79,7 @@ function App() {
       ) : (
         <Routes>
             <Route path="/" element={<MainPageAuthPresenter />} />
-            <Route path="/LogIn" element={<UserSignInPresenter />} />
+            <Route path="/LogIn" element={<UserLogInPresenter />} />
             <Route path="/SignUp" element={<UserSignUpPresenter />} />
         </Routes>
 

@@ -1,3 +1,3 @@
 export default function UserSignOutPresenter() {
-  return <div>User Sign-Out component is missing</div>;
+  return <div>This function has not yet been implemented</div>;
 }
