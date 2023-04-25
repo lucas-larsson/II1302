@@ -25,7 +25,7 @@ module.exports.post.apiDoc = {
   },
   responses: {
     200: {
-      description: 'Successfully logged in',
+      description: 'Successfully updated plant data',
       content: {
         'application/json': {
           schema: {
