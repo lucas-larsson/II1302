@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Link, Routes, Route , useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import FrontPagePresenter from './Presenter/FrontPagePresenter';
-import UserSignInPresenter from './Presenter/UserSignInPresenter';
+import UserSignInPresenter from './Presenter/UserLogInPresenter';
 import UserSignUpPresenter from './Presenter/UserSignUpPresenter';
 import UserProfilePresenter from './Presenter/UserProfilePresenter';
-import UserSignOutPresenter from './Presenter/UserSignOutPresenter';
+import UserSignOutPresenter from './Presenter/UserLogOutPresenter';
 import { Nav, NavList, NavItem } from './Styles/NavStyles';
 import { Button, InnerBox, Title } from './Styles/BaseStyles';
 import MainPageAuthPresenter from './Presenter/MainPageAuthPresenter';
@@ -47,7 +47,7 @@ function App() {
           
           <NavList>
             <NavItem>
-              <NavLink to="/SignOut">Sign Out</NavLink>
+              <NavLink to="/LogOut">Log Out</NavLink>
             </NavItem>
             <NavItem>
               <NavLink to="/Profile">Profile</NavLink>
@@ -57,7 +57,7 @@ function App() {
           (
             <NavList>
             <NavItem>
-              <NavLink to="/SignIn">Sign In</NavLink>
+              <NavLink to="/LogIn">Log In</NavLink>
             </NavItem>
             <NavItem>
               <NavLink to="/SignUp">Sign Up</NavLink>
@@ -68,20 +68,18 @@ function App() {
           
         
       </Nav>
-
-      <Title>H2Oasis</Title>
       {isLoggedInTest ? (
         <div className="App">
           <Routes>
             <Route path="/" element={<FrontPagePresenter />} />
-            <Route path="/SignOut" element={<UserSignOutPresenter />} />
+            <Route path="/LogOut" element={<UserSignOutPresenter />} />
             <Route path="/Profile" element={<UserProfilePresenter />} />
           </Routes>
         </div>
       ) : (
         <Routes>
             <Route path="/" element={<MainPageAuthPresenter />} />
-            <Route path="/SignIn" element={<UserSignInPresenter />} />
+            <Route path="/LogIn" element={<UserSignInPresenter />} />
             <Route path="/SignUp" element={<UserSignUpPresenter />} />
         </Routes>
 

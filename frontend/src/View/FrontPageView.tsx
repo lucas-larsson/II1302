@@ -10,19 +10,25 @@ function FrontPageView(props: Props) {
   return (
     <OuterBox>
       <Text />
-      <InnerBox>
-        <div>
-          Text here
-        </div>
-      </InnerBox>
+      <OuterBox>
+        <InnerBox>
+          <Text>
+            <b>
+            Last time watered:
+            </b> XX:XX
+          </Text>
+        </InnerBox>
 
-      <InnerBox>
-        <div>
-          And here
-        </div>
-      </InnerBox>
+        <InnerBox>
+          <Text>
+            <b>
+          Current moisture level:
+            </b> XX%
+          </Text>
+        </InnerBox>
+      </OuterBox>
 
-      <p>Click the button below to water the plant</p>
+      <Text>Click the button below to water the plant</Text>
 
       <Button>
         <WaterDrop width={32} height={32} /> Water
