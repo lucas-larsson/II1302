@@ -213,32 +213,12 @@ module.exports = {
   UpdatePlantData: {
     type: 'object',
     additionalProperties: false,
-    required: [
-      'name',
-      'description',
-      'watering_interval',
-      'last_watered',
-      'iot_device_id',
-      'iot_device_password',
-    ],
+    required: ['moisture_level', 'last_watered', 'iot_device_id', 'iot_device_password'],
     properties: {
-      name: {
-        type: 'string',
-        example: 'kaktus',
-        minimum: 1,
-        maximum: 255,
-      },
-      description: {
-        type: 'string',
-        example: 'en kaktus',
-        minimum: 1,
-        maximum: 255,
-      },
-      watering_interval: {
+      moisture_level: {
         type: 'integer',
-        example: 7,
+        example: 1,
         minimum: 1,
-        maximum: 255,
       },
       last_watered: {
         $ref: '#/components/schemas/DateTime',
@@ -251,6 +231,27 @@ module.exports = {
         example: 'password',
         minimum: 1,
         maximum: 255,
+      },
+    },
+  },
+  PlantData: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['iot_device_id', 'moisture_level', 'last_watered', 'person_id'],
+    properties: {
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      moisture_level: {
+        type: 'integer',
+        example: 1,
+        minimum: 1,
+      },
+      last_watered: {
+        $ref: '#/components/schemas/DateTime',
+      },
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
       },
     },
   },
