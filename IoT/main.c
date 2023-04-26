@@ -1,15 +1,18 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include <ArduinoJson.hpp>
 
 const char* ssid = "Deantz";
 const char* password = "Danne117";
+const char* serverUrl = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update";
+bool automatic = false;
 
 const int moistureSensorPin = 33;
 const int pumpControlPin = 4;
-const int pumpOnThreshold = 450; // Adjust this value based on your sensor readings
-int lastTimeO = 0;
-
-unsigned long lastTimeWatered = 0;
+const int pumpOnThreshold = 450; // !Should be variable. At start empty. Will be set to value received from API in JSON.
+int 
+unsigned long lastTime = 0;
 unsigned long timerDelay = 6000;
 
 void setup() 
@@ -18,10 +21,6 @@ void setup()
 
   pinMode(pumpControlPin, OUTPUT);
   digitalWrite(pumpControlPin, LOW);
-
-  // print the MAC address to the serial monitor:
-  Serial.print("MAC Address: ");
-  Serial.println(WiFi.macAddress());
 
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
@@ -44,11 +43,9 @@ void loop()
   if ((millis() - lastTime) > timerDelay) 
   {
     int moistureLevel = readMoistureLevel();
-    controlMotorPump(moistureLevel);
+    controlMotorPump(moistureLevel, 480);
     updatePlantMoistureLevel(moistureLevel);
-
     lastTime = millis();
-    
   }
 }
 
@@ -61,77 +58,92 @@ int readMoistureLevel()
   return moistureLevel;
 }
 
-void controlMotorPump(int moistureLevel) 
-{
-  if (moistureLevel < pumpOnThreshold) 
-  {
 
-    digitalWrite(pumpControlPin, HIGH);
-    Serial.println("Pump on");
-  } 
-  else 
+void controlMotorPump(int moistureLevel, int threshold) 
+{
+  int plant_moist = threshold;
+  
+  /* Check if automatic mode is on or off*/
+  if(automatic == true)
   {
-    digitalWrite(pumpControlPin, LOW);
-    Serial.println("Pump off");
+    if (moistureLevel < pumpOnThreshold) 
+    {
+      while (true)
+      {
+        moistureLevel = readMoistureLevel();
+        if(moistureLevel < plant_moist)
+        {
+          digitalWrite(pumpControlPin, HIGH);
+          Serial.println("Pump on");
+        }
+        if(moistureLevel >= plant_moist)
+        {
+          digitalWrite(pumpControlPin, LOW);
+          Serial.println("Pump off");
+          break;
+        }
+        delay(100);
+      }
+    }
+    else 
+    {
+      digitalWrite(pumpControlPin, LOW);
+    }
   }
+  else
+  {
+    /* Wait for user to press the "water" button on UI */
+    if(button == true)
+    {
+      while (true)
+      {
+        moistureLevel = readMoistureLevel();
+        if(moistureLevel < plant_moist)
+        {
+          digitalWrite(pumpControlPin, HIGH);
+          Serial.println("Pump on");
+        }
+        if(moistureLevel >= plant_moist)
+        {
+          digitalWrite(pumpControlPin, LOW);
+          Serial.println("Pump off");
+          break;
+        }
+        delay(100);
+      }
+    }
+    else
+    {
+      digitalWrite(pumpControlPin, LOW);
+    }
+  } 
 }
 
 void updatePlantMoistureLevel(int moistureLevel) 
 {
   if (WiFi.status()== WL_CONNECTED) 
   {
-    WiFiClient client;
-    HTTPClient http;
  
-    String serverUrl = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update/";
-    serverUrl += "?moistureLevel=";
-    serverUrl +=;
-
-
     // Create a JSON object
     StaticJsonDocument<200> jsonDoc;
     jsonDoc["moisture_value"] =  moistureLevel;
-    jsonDoc["device_id"] = "94:E6:86:A7:AB:88";
+    jsonDoc["iot_device_id"] = "94:E6:86:A7:AB:88";
+    jsonDoc["iot_device_password"] = "testtest";
     jsonDoc["last_watered"] = "2023-04-25 15:30:00";
 
     // Serialize the JSON object to a string
     String jsonString;
     serializeJson(jsonDoc, jsonString);
 
-    // Make an HTTP POST request to the API endpoint
+    // Send the JSON data to the API endpoint
+    HTTPClient http;
     http.begin(serverUrl);
     http.addHeader("Content-Type", "application/json");
     int httpResponseCode = http.POST(jsonString);
+    Serial.printf("HTTP response code: %d\n", httpResponseCode);
     String response = http.getString();
-    http.end();
-
-    // Print the HTTP response
-    Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
-    Serial.print("Server response: ");
     Serial.println(response);
-
-    delay(5000); // Wait for 5 seconds before sending another request
-   
-
-    http.begin(client, serverUrl.c_str());
-    int httpResponseCode = http.GET();
-    if (httpResponseCode > 0) 
-    {
-      Serial.print("HTTP Response code: ");
-      Serial.println(httpResponseCode);
-    } 
-    else 
-    {
-      Serial.print("Error code: ");
-      Serial.println(httpResponseCode);
-    }
+  
     http.end();
   }
 }
-
-
-
-
-
-  
