@@ -39,6 +39,13 @@ const Text = styled.p`
   margin: 5px;
   padding: 8px;
 `;
+const ErrorText = styled.p`
+  font-size: 20px;
+  text-align: center;
+  color: solid red;
+  margin: 5px;
+  padding: 8px;
+`;
 interface BtnProps{
   fontSize?:number
 }
@@ -106,4 +113,4 @@ outline: none;
   cursor: pointer;
 `;
 
-export { OuterBox, InnerBox, Button, RedButton, Input, Slider, Title, Text };
+export { OuterBox, InnerBox, Button, RedButton, Input, Slider, Title, Text, ErrorText };
