@@ -91,8 +91,8 @@ void updatePlantMoistureLevel(int moistureLevel)
     // Create a JSON object
     StaticJsonDocument<200> jsonDoc;
     jsonDoc["moisture_value"] =  moistureLevel;
-    jsonDoc["device_id"] = "esp32-01";
-    jsonDoc["timestamp"] = "2023-04-25 15:30:00";
+    jsonDoc["device_id"] = "94:E6:86:A7:AB:88";
+    jsonDoc["last_watered"] = "2023-04-25 15:30:00";
 
     // Serialize the JSON object to a string
     String jsonString;
@@ -129,3 +129,9 @@ void updatePlantMoistureLevel(int moistureLevel)
     http.end();
   }
 }
+
+
+
+
+
+  
