@@ -2,12 +2,7 @@ const plants = require('../../middlewares/plants'),
   responseMiddleware = require('../../middlewares/response');
 
 module.exports = {
-  post: [
-    plants.initLocals,
-    plants.authorizeIOT,
-    plants.waterPlant,
-    responseMiddleware.sendResponse(200, 'outData'),
-  ],
+  post: [plants.initLocals, plants.waterPlant, responseMiddleware.sendResponse(200, 'outData')],
 };
 
 module.exports.post.apiDoc = {

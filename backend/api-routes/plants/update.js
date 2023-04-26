@@ -4,9 +4,9 @@ const plants = require('../../middlewares/plants'),
 module.exports = {
   post: [
     plants.initLocals,
-    plants.authorizeIOT,
+    plants.iotExists,
     plants.updatePlantData,
-    responseMiddleware.sendResponse(200, 'outData'),
+    responseMiddleware.sendResponse(201, 'outData'),
   ],
 };
 
@@ -24,12 +24,12 @@ module.exports.post.apiDoc = {
     },
   },
   responses: {
-    200: {
+    201: {
       description: 'Successfully updated plant data',
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/Plant',
+            $ref: '#/components/schemas/PlantData',
           },
         },
       },

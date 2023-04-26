@@ -7,12 +7,12 @@ const initLocals = (req, res, next) => {
   next();
 };
 
-const authorizeIOT = async (req, res, next) => {
-  const { iothub_device_id, iothub_device_password } = req.body;
-  if (iothub_device_id && iothub_device_password) {
-    const plant = await plantsDAO.iotExists(iothub_device_id, iothub_device_password);
-    if (!!plant) {
-      res.locals.plant = plant;
+const iotExists = async (req, res, next) => {
+  const { iot_device_id, iot_device_password } = req.body;
+  if (iot_device_id && iot_device_password) {
+    const iot_device = await plantsDAO.iotExists(iot_device_id, iot_device_password);
+    if (!!iot_device) {
+      res.locals.iot_device = iot_device;
       return next();
     } else {
       return next(
@@ -26,11 +26,17 @@ const authorizeIOT = async (req, res, next) => {
 };
 
 const updatePlantData = async (req, res, next) => {
-  const { device_id } = res.locals.plant;
+  const { iot_device_id, moisture_level, last_watered } = req.body;
+  const { id } = res.locals.iot_device;
   try {
-    res.locals.plant = await plantsDAO.updatePlantData(device_id);
+    res.locals.outData = await plantsDAO.updatePlantData(
+      iot_device_id,
+      moisture_level,
+      last_watered,
+      id
+    );
     console.log(`plant data has been updated`);
-    next();
+    return next();
   } catch (err) {
     console.error('Error in updatePlantData: ', err.message);
     return next(
@@ -63,7 +69,7 @@ const waterPlant = async (req, res, next) => {
 
 module.exports = {
   initLocals,
-  authorizeIOT,
+  iotExists,
   updatePlantData,
   waterPlant,
 };
