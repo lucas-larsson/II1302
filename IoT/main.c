@@ -11,7 +11,7 @@ bool automatic = false;
 const int moistureSensorPin = 33;
 const int pumpControlPin = 4;
 const int pumpOnThreshold = 450; // !Should be variable. At start empty. Will be set to value received from API in JSON.
-int 
+
 unsigned long lastTime = 0;
 unsigned long timerDelay = 6000;
 
@@ -55,6 +55,7 @@ int readMoistureLevel()
   int moistureLevel = map(sensorValue, 0, 800, 0, 100);
   Serial.print("Moisture level: ");
   Serial.println(moistureLevel);
+   Serial.println("%");
   return moistureLevel;
 }
 
@@ -63,60 +64,29 @@ void controlMotorPump(int moistureLevel, int threshold)
 {
   int plant_moist = threshold;
   
-  /* Check if automatic mode is on or off*/
-  if(automatic == true)
+  if (moistureLevel < pumpOnThreshold) 
   {
-    if (moistureLevel < pumpOnThreshold) 
+    while (true)
     {
-      while (true)
+      moistureLevel = readMoistureLevel();
+      if(moistureLevel < plant_moist)
       {
-        moistureLevel = readMoistureLevel();
-        if(moistureLevel < plant_moist)
-        {
-          digitalWrite(pumpControlPin, HIGH);
-          Serial.println("Pump on");
-        }
-        if(moistureLevel >= plant_moist)
-        {
-          digitalWrite(pumpControlPin, LOW);
-          Serial.println("Pump off");
-          break;
-        }
-        delay(100);
+        Serial.println("Pump on");
+        digitalWrite(pumpControlPin, HIGH);
       }
-    }
-    else 
-    {
-      digitalWrite(pumpControlPin, LOW);
+      if(moistureLevel >= plant_moist)
+      {
+        digitalWrite(pumpControlPin, LOW);
+        break;
+      }
+      delay(100);
     }
   }
-  else
+  else 
   {
-    /* Wait for user to press the "water" button on UI */
-    if(button == true)
-    {
-      while (true)
-      {
-        moistureLevel = readMoistureLevel();
-        if(moistureLevel < plant_moist)
-        {
-          digitalWrite(pumpControlPin, HIGH);
-          Serial.println("Pump on");
-        }
-        if(moistureLevel >= plant_moist)
-        {
-          digitalWrite(pumpControlPin, LOW);
-          Serial.println("Pump off");
-          break;
-        }
-        delay(100);
-      }
-    }
-    else
-    {
-      digitalWrite(pumpControlPin, LOW);
-    }
-  } 
+    Serial.println("Pump off");
+    digitalWrite(pumpControlPin, LOW);
+  }
 }
 
 void updatePlantMoistureLevel(int moistureLevel) 
@@ -126,10 +96,11 @@ void updatePlantMoistureLevel(int moistureLevel)
  
     // Create a JSON object
     StaticJsonDocument<200> jsonDoc;
-    jsonDoc["moisture_value"] =  moistureLevel;
-    jsonDoc["iot_device_id"] = "94:E6:86:A7:AB:88";
-    jsonDoc["iot_device_password"] = "testtest";
+    jsonDoc["moisture_level"] =  300;
     jsonDoc["last_watered"] = "2023-04-25 15:30:00";
+    jsonDoc["iot_device_id"] = 123;
+    jsonDoc["iot_device_password"] = "password";
+   
 
     // Serialize the JSON object to a string
     String jsonString;
