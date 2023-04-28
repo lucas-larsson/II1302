@@ -28,10 +28,33 @@ const waterPlant = async function (device_id) {
   return true;
 };
 
+const iotExistsByDeviceId = async (device_id) => {
+  console.log('device_id: ', device_id);
+  const query = `SELECT * FROM iot_auth WHERE device_id = $1`;
+  try {
+    const result = await sendQuery(query, [device_id]);
+    console.log('result.rows[0].length: ', result.rows.length);
+    return !!result.rows.length;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getPlantData = async (device_id) => {
+  const query = `SELECT * FROM plant_data WHERE device_id = $1 ORDER BY last_watered DESC LIMIT 1`;
+  try {
+    return (await sendQuery(query, [device_id])).rows[0];
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   plantsDAO: {
     iotExists,
     updatePlantData,
     waterPlant,
+    iotExistsByDeviceId,
+    getPlantData,
   },
 };

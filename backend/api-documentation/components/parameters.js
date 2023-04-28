@@ -17,4 +17,14 @@ module.exports = {
       $ref: '#/components/schemas/Uuid',
     },
   },
+  plantId: {
+    name: 'plant_id',
+    in: 'path',
+    description: 'Contains the plant_id of the plant',
+    required: true,
+    schema: {
+      $ref: '#/components/schemas/GenericId',
+    },
+    example: '1',
+  },
 };
