@@ -42,7 +42,7 @@ const Text = styled.p`
 const ErrorText = styled.p`
   font-size: 20px;
   text-align: center;
-  color: solid red;
+  color: #ff0000;
   margin: 5px;
   padding: 8px;
 `;

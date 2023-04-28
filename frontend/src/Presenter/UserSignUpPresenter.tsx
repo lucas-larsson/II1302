@@ -1,7 +1,6 @@
 import React from "react";
 import UserSignUpView from "../View/UserSignUpView";
 import { useNavigate } from "react-router-dom";
-
 import { containsNumber, containsSymbol, isValidEmail } from "../Helpers/Formatting";
 
 export default function UserSignUpPresenter() {
