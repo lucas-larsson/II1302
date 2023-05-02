@@ -2,10 +2,13 @@ import React from "react";
 import UserSignUpView from "../View/UserSignUpView";
 import { useNavigate } from "react-router-dom";
 import { containsNumber, containsSymbol, isValidEmail } from "../Helpers/Formatting";
+import { useDispatch } from "react-redux";
+import { setAuthenticated, setUser, setSession } from "../store/authSlice";
 
 export default function UserSignUpPresenter() {
   const [errorMsg, setErrorMsg] = React.useState<string>("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   async function signUp(firstName: string, lastName: string, email: string, password: string) {
 
@@ -53,6 +56,9 @@ export default function UserSignUpPresenter() {
       console.log("New user:", user);
       console.log("Session:", session);
       setErrorMsg(""); // Clear any previous error message
+      dispatch(setAuthenticated(true));
+      dispatch(setUser(user));
+      dispatch(setSession(session));
 
       // Navigate to the home page
       navigate("/");
