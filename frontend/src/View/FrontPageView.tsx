@@ -1,5 +1,4 @@
-import styled from 'styled-components';
-import { InnerBox, OuterBox, Button, Title , Text} from '../Styles/BaseStyles';
+import { InnerBox, OuterBox, Button, Text } from '../Styles/BaseStyles';
 import { ReactComponent as WaterDrop } from '../Icons/water-drop.svg';
 
 interface Props {
@@ -13,17 +12,13 @@ function FrontPageView(props: Props) {
       <OuterBox>
         <InnerBox>
           <Text>
-            <b>
-            Last time watered:
-            </b> XX:XX
+            <b>Last time watered:</b> XX:XX
           </Text>
         </InnerBox>
 
         <InnerBox>
           <Text>
-            <b>
-          Current moisture level:
-            </b> XX%
+            <b>Current moisture level:</b> XX%
           </Text>
         </InnerBox>
       </OuterBox>

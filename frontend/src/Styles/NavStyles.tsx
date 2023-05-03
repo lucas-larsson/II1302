@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { BrowserRouter as Link } from 'react-router-dom';
 
 const Nav = styled.nav`
   display: flex;
@@ -29,7 +28,4 @@ const NavItem = styled.li`
   }
 `;
 
-
-
-export {Nav, NavItem, NavList}
-
+export { Nav, NavItem, NavList };

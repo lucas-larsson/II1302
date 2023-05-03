@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Link, Routes, Route , useNavigate} from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Link, Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import FrontPagePresenter from './Presenter/FrontPagePresenter';
 import UserLogInPresenter from './Presenter/UserLogInPresenter';
@@ -7,17 +7,17 @@ import UserSignUpPresenter from './Presenter/UserSignUpPresenter';
 import UserProfilePresenter from './Presenter/UserProfilePresenter';
 
 import { Nav, NavList, NavItem } from './Styles/NavStyles';
-import { Button, InnerBox, Title } from './Styles/BaseStyles';
+import { Button, InnerBox } from './Styles/BaseStyles';
 import MainPageAuthPresenter from './Presenter/MainPageAuthPresenter';
 import { ReactComponent as Ripple } from './Icons/ripple.svg';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
-import { setAuthenticated, setSession, setUser } from './store/authSlice';
 import { LogOut } from './Presenter/LogOut';
 
-
 function App() {
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
 
   // Remove the testLogin function and the isLoggedInTest state, since it's not needed anymore
 
@@ -26,10 +26,13 @@ function App() {
       <Nav>
         {/* Remove the test login/logout links */}
 
-        <NavLink to="/"><InnerBox><Ripple width={30} height={30}></Ripple> Home</InnerBox></NavLink>
-        
-          {isAuthenticated ? 
-          
+        <NavLink to="/">
+          <InnerBox>
+            <Ripple width={30} height={30}></Ripple> Home
+          </InnerBox>
+        </NavLink>
+
+        {isAuthenticated ? (
           <NavList>
             <NavItem>
               <NavLink to="/LogOut">Log Out</NavLink>
@@ -38,20 +41,16 @@ function App() {
               <NavLink to="/Profile">Profile</NavLink>
             </NavItem>
           </NavList>
-          :
-          (
-            <NavList>
+        ) : (
+          <NavList>
             <NavItem>
               <NavLink to="/LogIn">Log In</NavLink>
             </NavItem>
             <NavItem>
               <NavLink to="/SignUp">Sign Up</NavLink>
             </NavItem>
-            </NavList>
-          )
-          }
-          
-        
+          </NavList>
+        )}
       </Nav>
       {isAuthenticated ? (
         <div className="App">
@@ -63,11 +62,10 @@ function App() {
         </div>
       ) : (
         <Routes>
-            <Route path="/" element={<MainPageAuthPresenter />} />
-            <Route path="/LogIn" element={<UserLogInPresenter />} />
-            <Route path="/SignUp" element={<UserSignUpPresenter />} />
+          <Route path="/" element={<MainPageAuthPresenter />} />
+          <Route path="/LogIn" element={<UserLogInPresenter />} />
+          <Route path="/SignUp" element={<UserSignUpPresenter />} />
         </Routes>
-
       )}
     </Router>
   );
@@ -85,7 +83,7 @@ const NavButton = styled(Button)`
   &:hover {
     color: #f0f3bd;
   }
-`
+`;
 const NavLink = styled(Link)`
   color: white;
   text-decoration: none;
