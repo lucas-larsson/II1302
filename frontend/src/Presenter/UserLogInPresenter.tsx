@@ -2,12 +2,14 @@ import React from "react";
 import UserLogInView from "../View/UserLogInView";
 import { useNavigate } from "react-router-dom";
 import { containsNumber, containsSymbol, isValidEmail } from "../Helpers/Formatting";
+import { useDispatch } from "react-redux";
+import { setAuthenticated, setUser, setSession } from "../store/authSlice";
 
 
 export default function UserLogInPresenter() {
   const [errorMsg, setErrorMsg] = React.useState<string>("");
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   async function logIn(email: string, password: string) {
 
     if(email.length < 1 || password.length < 1){
@@ -42,6 +44,10 @@ export default function UserLogInPresenter() {
       console.log("Logged in:", user);
       console.log("Session:", session);
       setErrorMsg(""); // Clear any previous error message
+      dispatch(setAuthenticated(true));
+      dispatch(setUser(user));
+      dispatch(setSession(session));
+
 
       // Navigate to the home page
       navigate("/");

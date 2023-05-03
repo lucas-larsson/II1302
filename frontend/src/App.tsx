@@ -5,45 +5,30 @@ import FrontPagePresenter from './Presenter/FrontPagePresenter';
 import UserLogInPresenter from './Presenter/UserLogInPresenter';
 import UserSignUpPresenter from './Presenter/UserSignUpPresenter';
 import UserProfilePresenter from './Presenter/UserProfilePresenter';
-import UserSignOutPresenter from './Presenter/UserLogOutPresenter';
+
 import { Nav, NavList, NavItem } from './Styles/NavStyles';
 import { Button, InnerBox, Title } from './Styles/BaseStyles';
 import MainPageAuthPresenter from './Presenter/MainPageAuthPresenter';
 import { ReactComponent as Ripple } from './Icons/ripple.svg';
-
-
-const NavLink = styled(Link)`
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1.2rem;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    color: #f0f3bd;
-  }
-`;
+import { useSelector } from 'react-redux';
+import { RootState } from './store/store';
+import { setAuthenticated, setSession, setUser } from './store/authSlice';
+import { LogOut } from './Presenter/LogOut';
 
 
 function App() {
-  const [isLoggedInTest, toggleLoginTest] = useState<Boolean>(false);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
-  function testLogin() {
-    toggleLoginTest(!isLoggedInTest);
-  }
+  // Remove the testLogin function and the isLoggedInTest state, since it's not needed anymore
 
   return (
     <Router>
       <Nav>
-        {isLoggedInTest ? (
-          <NavLink onClick={testLogin} to={"/"}>Test Log-out</NavLink>
-        ) : (
-          <NavLink onClick={testLogin} to={"/"}>Test Log-in</NavLink>
-        )}
+        {/* Remove the test login/logout links */}
 
         <NavLink to="/"><InnerBox><Ripple width={30} height={30}></Ripple> Home</InnerBox></NavLink>
         
-          {isLoggedInTest ? 
+          {isAuthenticated ? 
           
           <NavList>
             <NavItem>
@@ -68,12 +53,12 @@ function App() {
           
         
       </Nav>
-      {isLoggedInTest ? (
+      {isAuthenticated ? (
         <div className="App">
           <Routes>
             <Route path="/" element={<FrontPagePresenter />} />
-            <Route path="/LogOut" element={<UserSignOutPresenter />} />
             <Route path="/Profile" element={<UserProfilePresenter />} />
+            <Route path="/LogOut" element={<LogOut />} />
           </Routes>
         </div>
       ) : (
@@ -89,3 +74,26 @@ function App() {
 }
 
 export default App;
+
+const NavButton = styled(Button)`
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    color: #f0f3bd;
+  }
+`
+const NavLink = styled(Link)`
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    color: #f0f3bd;
+  }
+`;
