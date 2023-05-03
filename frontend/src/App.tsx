@@ -7,7 +7,7 @@ import UserSignUpPresenter from './Presenter/UserSignUpPresenter';
 import UserProfilePresenter from './Presenter/UserProfilePresenter';
 
 import { Nav, NavList, NavItem } from './Styles/NavStyles';
-import { Button, InnerBox } from './Styles/BaseStyles';
+import { InnerBox } from './Styles/BaseStyles';
 import MainPageAuthPresenter from './Presenter/MainPageAuthPresenter';
 import { ReactComponent as Ripple } from './Icons/ripple.svg';
 import { useSelector } from 'react-redux';
