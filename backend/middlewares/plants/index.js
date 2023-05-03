@@ -25,6 +25,22 @@ const iotExists = async (req, res, next) => {
   }
 };
 
+const iotExistsByDeviceId = async (req, res, next) => {
+  const { plant_id } = req.params;
+  const iotDeviceExist = await plantsDAO.iotExistsByDeviceId(plant_id);
+  if (iotDeviceExist) {
+    res.locals.device_id = plant_id;
+    return next();
+  } else {
+    return next(
+      errorCodes.notFound({
+        req,
+        message: `not found`,
+      })
+    );
+  }
+};
+
 const updatePlantData = async (req, res, next) => {
   const { iot_device_id, moisture_level, last_watered } = req.body;
   const { id } = res.locals.iot_device;
@@ -67,9 +83,27 @@ const waterPlant = async (req, res, next) => {
   }
 };
 
+const getPlantData = async (req, res, next) => {
+  const device_id = res.locals.device_id;
+  try {
+    res.locals.outData = await plantsDAO.getPlantData(device_id);
+    return next();
+  } catch (err) {
+    console.error('Error in getPlantData: ', err.message);
+    return next(
+      errorCodes.serverError({
+        req,
+        message: 'Could not get plant data',
+      })
+    );
+  }
+};
+
 module.exports = {
   initLocals,
   iotExists,
   updatePlantData,
   waterPlant,
+  iotExistsByDeviceId,
+  getPlantData,
 };
