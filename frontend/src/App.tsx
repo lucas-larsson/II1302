@@ -73,17 +73,6 @@ function App() {
 
 export default App;
 
-const NavButton = styled(Button)`
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1.2rem;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    color: #f0f3bd;
-  }
-`;
 const NavLink = styled(Link)`
   color: white;
   text-decoration: none;
