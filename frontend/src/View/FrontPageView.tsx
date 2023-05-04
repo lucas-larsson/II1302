@@ -1,9 +1,11 @@
 import styled from 'styled-components';
 import { InnerBox, OuterBox, Button, Title , Text} from '../Styles/BaseStyles';
 import { ReactComponent as WaterDrop } from '../Icons/water-drop.svg';
+import { Timestamp } from 'firebase/firestore';
 
 interface Props {
-  //whatever props is needed will be put here like text:String
+  lastWatered:string;
+  moistureLevel:number;
 }
 
 function FrontPageView(props: Props) {
@@ -15,7 +17,7 @@ function FrontPageView(props: Props) {
           <Text>
             <b>
             Last time watered:
-            </b> XX:XX
+            </b> {props.lastWatered}
           </Text>
         </InnerBox>
 
@@ -23,7 +25,7 @@ function FrontPageView(props: Props) {
           <Text>
             <b>
           Current moisture level:
-            </b> XX%
+            </b> {props.moistureLevel}%
           </Text>
         </InnerBox>
       </OuterBox>

@@ -16,7 +16,7 @@ export default function UserProfileView() {
           <Text>Person ID: {user.person_id}</Text>
         </>
       ) : (
-        <Text>This should contain information about the user.</Text>
+        <Text>You have to log in to see this page.</Text>
       )}
     </OuterBox>
   );
