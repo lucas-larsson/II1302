@@ -1,180 +1,262 @@
-include <WiFi.h>
+#include <WiFi.h>
+#include <WiFiServer.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-#include <ArduinoJson.hpp>
 
-const char* ssid = "eduroam";
-const char* password = "5dMZmVnhs";
 const char* ssid = "Deantz";
 const char* password = "Danne117";
-const char* serverUrl = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update";
-bool automatic = false;
+const char* apiURL = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update";
+const char* espURL = "http://192.168.1.10";
 
-//Your Domain name with URL path or IP address with path
-const char* serverName = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update/";
+bool auto_mode = true;
+bool water;
+const char* Secret_Key = "JNOJZGVRAIGAEHIPO2RN";
+const char* device_ID = "17d1acab-7a85-41a2-8055-d9df7c81f90e";
+
 const int moistureSensorPin = 33;
-const int pumpControlPin = 4;
-const int pumpOnThreshold = 450; // !Should be variable. At start empty. Will be set to value received from API in JSON.
+const int pumpControlPin = 19;
+int plantMoist = 0;
 
-// the following variables are unsigned longs because the time, measured in
-// milliseconds, will quickly become a bigger number than can be stored in an int.
+const int LED_R = 12;
+const int LED_G = 13;
+const int LED_Y = 14;
+
 unsigned long lastTime = 0;
-// Timer set to 10 minutes (600000)
-//unsigned long timerDelay = 600000;
-// Set timer to 5 seconds (5000)
-unsigned long timerDelay = 5000;
-unsigned long timerDelay = 6000;
+unsigned long timerDelay = 600000;
 
-void setup()
+WiFiServer server(80);
+
+void setup() 
 {
   Serial.begin(115200);
-
+  pinMode(LED_R, OUTPUT);
+  pinMode(LED_G, OUTPUT);
+  pinMode(LED_Y, OUTPUT);
   pinMode(pumpControlPin, OUTPUT);
   digitalWrite(pumpControlPin, LOW);
-
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
-  while(WiFi.status() != WL_CONNECTED)
-
-  while(WiFi.status() != WL_CONNECTED)
+  
+  while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
     Serial.print(".");
   }
-
+  
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
 
-  Serial.println("Timer set to 5 seconds (timerDelay variable), it will take 5 seconds before publishing the first reading.");
-
+  server.begin();
   Serial.println("Timer set to 10 minutes (timerDelay variable), it will take 10 minutes before publishing the first reading.");
 }
 
-void loop()
+void loop() 
 {
-  //Send an HTTP POST request every 10 minutes
-  if ((millis() - lastTime) > timerDelay) {
-    //Check WiFi connection status
-    if(WiFi.status()== WL_CONNECTED){
-      WiFiClient client;
-      HTTPClient http;
+  WiFiClient client = server.available();
 
-      // Your Domain name with URL path or IP address with path
-      http.begin(client, serverName);
-
-      // If you need Node-RED/server authentication, insert user and password below
-      //http.setAuthorization("REPLACE_WITH_SERVER_USERNAME", "REPLACE_WITH_SERVER_PASSWORD");
-
-      // Specify content-type header
-      http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-      // Data to send with HTTP POST
-      String httpRequestData = "api_key=tPmAT5Ab3j7F9&sensor=BME280&value1=24.25&value2=49.54&value3=1005.14";
-      // Send HTTP POST request
-      // TODO: Change to POST request
-      // Here we are using the HTTP POST method to send the data to the server, so maybe just collect the data and send it each 15 minutes?
-      int httpResponseCode = http.POST(httpRequestData);
-
-      // If you need an HTTP request with a content type: application/json, use the following:
-      //http.addHeader("Content-Type", "application/json");
-      //int httpResponseCode = http.POST("{\"api_key\":\"tPmAT5Ab3j7F9\",\"sensor\":\"BME280\",\"value1\":\"24.25\",\"value2\":\"49.54\",\"value3\":\"1005.14\"}");
-
-      // If you need an HTTP request with a content type: text/plain
-      //http.addHeader("Content-Type", "text/plain");
-      //int httpResponseCode = http.POST("Hello, World!");
-
-      Serial.print("HTTP Response code: ");
-      Serial.println(httpResponseCode);
-
-      // Free resources
-      http.end();
-    }
-    else
+  if (client)
+  {
+    Serial.println("New Client connected");
+    
+    while (!client.available()) 
     {
-      Serial.println("WiFi Disconnected");
+      delay(1);
+    }  
+
+    // Read HTTP request from client
+    String request = client.readStringUntil('\r');
+    client.flush();
+
+    // Parse HTTP request to get URL and HTTP method
+    String url = "";
+    String method = "";
+    int idx1 = request.indexOf(" ");
+    int idx2 = request.indexOf(" ", idx1+1);
+    
+    if (idx1 != -1 && idx2 != -1) 
+    {
+      method = request.substring(0, idx1);
+      url = request.substring(idx1 + 1, idx2);
     }
-  if ((millis() - lastTime) > timerDelay)
+    
+    Serial.println("Method: " + method);
+    Serial.println("URL: " + url);
+
+    if (method == "POST" && url == "/data") 
+    {
+      // Read JSON data from HTTP POST request
+      String json_string = "";
+      while (client.available()) 
+      {
+        json_string += (char) client.read();
+      }
+      
+      // Parse JSON data and extract variables
+      DynamicJsonDocument doc(1024);
+      deserializeJson(doc, json_string);
+      bool water = doc["water"];
+      bool auto_mode = doc["auto_mode"];
+      int plantMoist = doc["plantMoist"];
+
+      // Close connection with client
+      client.stop();
+
+
+      HTTPClient http;
+      http.begin(apiURL);
+      http.addHeader("Content-Type", "application/json");
+
+      String json_data = "{\"water\":" + String(water) + ",\"auto_mode\":" + String(auto_mode) + ",\"plantMoist\":" + String(plantMoist) + "}";
+      int http_code = http.POST(json_data);
+
+      if (http_code > 0) 
+      {
+        String response = http.getString();
+        Serial.println("API response: " + response);
+      } 
+      else 
+      {
+        Serial.println("HTTP request failed");
+      }
+
+      http.end();
+    } 
+    else 
+    {
+      // Send HTTP 404 Not Found response for any other URL
+      client.println("HTTP/1.1 404 Not Found");
+      client.println("Content-Type: text/html");
+      client.println();
+      client.println("<h1>404 Not Found</h1>");
+      client.stop();
+    }
+  }
+
+  if ((millis() - lastTime) > timerDelay) 
   {
     int moistureLevel = readMoistureLevel();
-    controlMotorPump(moistureLevel, 480);
+    
+    if( moistureLevel <= 20)
+    {
+      digitalWrite(LED_R, HIGH);
+      digitalWrite(LED_G, LOW);
+      digitalWrite(LED_Y, LOW);
+    }
+
+    if( moistureLevel > 20 && moistureLevel <= 55 )
+    {
+      digitalWrite(LED_R, LOW);
+      digitalWrite(LED_G, LOW);
+      digitalWrite(LED_Y, HIGH);
+    }
+    if( moistureLevel > 55)
+    {
+      digitalWrite(LED_R, LOW);
+      digitalWrite(LED_G, HIGH);
+      digitalWrite(LED_Y, LOW);
+    }
+    controlMotorPump(moistureLevel, plantMoist);
     updatePlantMoistureLevel(moistureLevel);
+    
     lastTime = millis();
   }
 }
 
-int readMoistureLevel()
+
+int readMoistureLevel() 
 {
   long sensorValue = analogRead(moistureSensorPin);
-  int moistureLevel = map(sensorValue, 0, 800, 0, 100);
+  int moistureLevel = map(sensorValue, 4095, 0, 0, 100);
+  int moistPercent = map(moistureLevel, 0, 28, 0, 100);
   Serial.print("Moisture level: ");
-  Serial.println(moistureLevel);
-   Serial.println("%");
-  return moistureLevel;
+  Serial.print(moistPercent);
+  Serial.println("%");
+  return moistPercent;
 }
 
-
-void controlMotorPump(int moistureLevel, int threshold)
+void controlMotorPump(int moistureLevel, int threshold) 
 {
   int plant_moist = threshold;
 
-  if (moistureLevel < pumpOnThreshold)
+  if(auto_mode == true)
   {
-    while (true)
+    if(moistureLevel < plant_moist || water == true)
     {
-      moistureLevel = readMoistureLevel();
-      if(moistureLevel < plant_moist)
+     
+      Serial.println("Turn pump on!!");
+      while (true)
       {
-        Serial.println("Pump on");
+        moistureLevel = readMoistureLevel();
+        
         digitalWrite(pumpControlPin, HIGH);
+ 
+        if(moistureLevel >= plant_moist)
+        {
+          digitalWrite(pumpControlPin, LOW);
+          digitalWrite(LED_R, LOW);
+          digitalWrite(LED_Y, LOW);
+          digitalWrite(LED_G, HIGH);
+          
+          break;
+        }
+        delay(1000);
       }
-      if(moistureLevel >= plant_moist)
-      {
-        digitalWrite(pumpControlPin, LOW);
-        break;
-      }
-      delay(100);
+    }
+    else 
+    {
+      Serial.println("Pump off");
+      digitalWrite(pumpControlPin, LOW);
     }
   }
-  else
+  
+
+  if(auto_mode == false)
   {
-    Serial.println("Pump off");
-    digitalWrite(pumpControlPin, LOW);
+    if(water == true)
+    {
+      while (true)
+      {
+        moistureLevel = readMoistureLevel();
+        digitalWrite(pumpControlPin, HIGH);
+ 
+        if(moistureLevel >= plant_moist)
+        {
+          digitalWrite(pumpControlPin, LOW);
+          break;
+        }
+        delay(1000);
+      }
+    }
   }
 }
 
-void updatePlantMoistureLevel(int moistureLevel)
+void updatePlantMoistureLevel(int moistureLevel) 
 {
-  if (WiFi.status()== WL_CONNECTED)
+  if (WiFi.status()== WL_CONNECTED) 
   {
-
+ 
     // Create a JSON object
     StaticJsonDocument<200> jsonDoc;
-    jsonDoc["moisture_level"] =  300;
+    jsonDoc["moisture_level"] =  moistureLevel;
     jsonDoc["last_watered"] = "2023-04-25 15:30:00";
     jsonDoc["iot_device_id"] = 123;
     jsonDoc["iot_device_password"] = "password";
-
+   
 
     // Serialize the JSON object to a string
     String jsonString;
     serializeJson(jsonDoc, jsonString);
 
-/*
-  Since WaterPump is READ_WRITE variable, onWaterPumpChange() is
-  executed every time a new value is received from IoT Cloud.
-*/
-void onWaterPumpChange()  {
-  // Add your code here to act upon WaterPump change
-}
     // Send the JSON data to the API endpoint
     HTTPClient http;
-    http.begin(serverUrl);
+    http.begin(apiURL);
     http.addHeader("Content-Type", "application/json");
     int httpResponseCode = http.POST(jsonString);
     Serial.printf("HTTP response code: %d\n", httpResponseCode);
     String response = http.getString();
     Serial.println(response);
-
+  
     http.end();
   }
 }
