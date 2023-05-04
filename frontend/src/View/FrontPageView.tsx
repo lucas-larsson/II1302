@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { InnerBox, OuterBox, Button, Title , Text} from '../Styles/BaseStyles';
+import { InnerBox, OuterBox, Button, Title ,Slider, Text} from '../Styles/BaseStyles';
 import { ReactComponent as WaterDrop } from '../Icons/water-drop.svg';
 
 interface Props {
@@ -27,6 +27,15 @@ function FrontPageView(props: Props) {
           </Text>
         </InnerBox>
       </OuterBox>
+
+      <Text>move the slider to change the moisture level</Text>
+
+      <Slider 
+        type="range"
+        min="1" 
+        max="100"
+      />
+
 
       <Text>Click the button below to water the plant</Text>
 
