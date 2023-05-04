@@ -96,21 +96,6 @@ const Input = styled.input`
   border: 1px solid #2a9d8f;
 `;
 
-const Slider = styled.input`
--webkit-appearance: none;
-width: 100%;
-height: 40px;
-border-radius: 30px;
-background-color: #0077cc;
-outline: none;
-&::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  background-color: #234F1E;
-  cursor: pointer;
-`;
 
-export { OuterBox, InnerBox, Button, RedButton, Input, Slider, Title, Text, ErrorText };
+
+export { OuterBox, InnerBox, Button, RedButton, Input, Title, Text, ErrorText };
