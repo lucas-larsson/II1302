@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { BrowserRouter as Router, Link, Routes, Route , useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import FrontPagePresenter from './Presenter/FrontPagePresenter';
@@ -7,7 +6,7 @@ import UserSignUpPresenter from './Presenter/UserSignUpPresenter';
 import UserProfilePresenter from './Presenter/UserProfilePresenter';
 
 import { Nav, NavList, NavItem } from './Styles/NavStyles';
-import { Button, InnerBox, Title } from './Styles/BaseStyles';
+import { InnerBox } from './Styles/BaseStyles';
 import MainPageAuthPresenter from './Presenter/MainPageAuthPresenter';
 import { ReactComponent as Ripple } from './Icons/ripple.svg';
 import { useSelector } from 'react-redux';
@@ -49,7 +48,6 @@ function App() {
             </NavList>
           )
           }
-          
         
       </Nav>
       {isAuthenticated ? (
