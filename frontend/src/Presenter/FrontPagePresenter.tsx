@@ -10,6 +10,10 @@ function FrontPagePresenter() {
       getPlantData();
     },[])
 
+    async function setIOTDeviceMoistureLevel(newLevel:number){
+      console.log("This will send a request to API endpoint to change the minimum moisture level for automatic watering");
+    }
+
     async function getPlantData(){
       let plantId:number = 123;
       const response = await fetch(
@@ -44,7 +48,7 @@ function FrontPagePresenter() {
     }
 
   //All logic will be computed here and then sent to the view via the use of props
-  return <FrontPageView lastWatered={lastWatered} moistureLevel={moistureLevel}></FrontPageView>;
+  return <FrontPageView lastWatered={lastWatered} moistureLevel={moistureLevel} setIOTDeviceMoistureLevel={setIOTDeviceMoistureLevel}></FrontPageView>;
 }
 
 export default FrontPagePresenter;
