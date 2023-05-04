@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { InnerBox, OuterBox, Button, Title ,Slider, Text} from '../Styles/BaseStyles';
+import { InnerBox, OuterBox, Button, Title, Text} from '../Styles/BaseStyles';
+import { Slider} from '../Styles/Slider';
 import { ReactComponent as WaterDrop } from '../Icons/water-drop.svg';
 
 interface Props {
