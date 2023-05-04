@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import {Slider} from './Slider';
 
 const OuterBox = styled.div`
   display: flex;
@@ -99,4 +98,4 @@ const Input = styled.input`
 
 
 
-export { OuterBox, InnerBox, Button, RedButton, Input, Title, Text, Slider, ErrorText };
+export { OuterBox, InnerBox, Button, RedButton, Input, Title, Text, ErrorText };
