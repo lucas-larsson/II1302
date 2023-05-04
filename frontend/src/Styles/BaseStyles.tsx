@@ -101,16 +101,17 @@ const Slider = styled.input`
 width: 100%;
 height: 40px;
 border-radius: 30px;
-background-color: #0077cc;
+background-color: #2a9d8f;
 outline: none;
 &::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 40px;
   height: 40px;
-  border-radius: 5px;
-  background-color: #234F1E;
+  border-radius: 100px;
+  background-color: #ffffff;
   cursor: pointer;
+}
 `;
 
 export { OuterBox, InnerBox, Button, RedButton, Input, Slider, Title, Text, ErrorText };
