@@ -10,10 +10,12 @@ const char* password = "Molodets100";
 const char* apiURL = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update"; // API URL for ESP32 to send a post request to
 const char* espURL = "http://193.10.38.237"; //Don't need to use atm
 
+
 /* IoT Cloud */
 const char THING_ID[] = "d7a62a2c-9ad4-4443-8c7f-162bf6bb10da"; // Thing ID used to authenticate the connected device with cloud IoT
 const char DEVICE_ID[] = "264ca76b-f1d2-47ba-9379-4f34725035c8";  // Device ID which is connected with cloud IoT
 const char DEVICE_PSW[] = "E6KPUM47BNZ8RQWQHYQ3"; // Device secret password to connect with the device
+
 
 char api_server[] = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/";  // API URL used to for ESP32 to listen too
 char endpoint[] = "/api/data/"; // end point which yet has to be stated
@@ -24,10 +26,12 @@ int plantMoist = 0;
 bool currentAutoMode = true;
 bool currentWater = false;
 
+
 /* TEST - variabels to update */ 
 int m;  
 bool a_m;
 bool btn;
+
 
 /* Pin connections */
 const int moistureSensorPin = 33;
@@ -35,6 +39,7 @@ const int pumpControlPin = 19;
 const int LED_R = 12;
 const int LED_G = 13;
 const int LED_Y = 14;
+
 
 /* Time related variabels */
 unsigned long lastTime = 0;
