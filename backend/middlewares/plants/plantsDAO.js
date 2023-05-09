@@ -22,10 +22,8 @@ const updatePlantData = async function (device_id, moisture_level, last_watered,
   }
 };
 
-const waterPlant = async function (device_id) {
-  // temp solution
-  // await updatePlantData(device_id);
-  return true;
+const waterPlant = async function (deviceData) {
+  return await updatePlantData(...deviceData);
 };
 
 const iotExistsByDeviceId = async (device_id) => {
