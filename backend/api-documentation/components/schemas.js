@@ -327,4 +327,23 @@ module.exports = {
       },
     },
   },
+  PlantDateInformation: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['session_id', 'iot_device_id', 'min_date', 'max_date'],
+      properties: {
+        session_id: {
+          $ref: '#/components/schemas/Uuid'
+        },
+        iot_device_id: {
+          $ref: '#/components/schemas/GenericId',
+        },
+        min_date: {
+          $ref: '#/components/schemas/DateTime',
+        },
+        max_date: {
+          $ref: '#/components/schemas/DateTime',
+        },
+      }
+  },
 };
