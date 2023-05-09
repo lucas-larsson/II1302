@@ -241,7 +241,6 @@ const checkIfUserExists = async (req, res, next) => {
  */
 const getRole = async (req, res, next) => {
   const { person_id } = req.body ? req.body : req.headers;
-  console.log('person_id: ', person_id);
   try {
     res.locals.outData.role = await authDAO.getRole(person_id);
     next();
@@ -284,6 +283,26 @@ const storeUser = async (req, res, next) => {
   }
 };
 
+const authorizeSession = async (req, res, next) => {
+  const { session_id, person_id } = req.body;
+  try {
+    const result = await authDAO.getSession(person_id, session_id);
+    if (result.length === 0) {
+      return next(
+        errorCodes.unauthorized({
+          req,
+          message: `Session with session_id: ${session_id} not found`,
+        })
+      );
+    }
+    res.locals.outData.session = result[0];
+    next();
+  } catch (err) {
+    console.error('Error in authorizeSession: ', err.message);
+    return next(errorCodes.serverError({ req, message: 'Could not get session' }));
+  }
+};
+
 module.exports = {
   initLocals,
   authorize: [storeUser, getSession, authorize],
@@ -294,4 +313,5 @@ module.exports = {
   checkIfSessionExists,
   checkIfUserExists,
   getRole,
+  authorizeSession,
 };

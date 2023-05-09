@@ -4,7 +4,7 @@ const auth = require('../middlewares/auth'),
 module.exports = {
   post: [
     auth.initLocals,
-    auth.authorize,
+    auth.authorizeSession,
     auth.getRole,
     responseMiddleware.sendResponse(200, 'outData'),
   ],
