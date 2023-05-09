@@ -1,4 +1,4 @@
-#include "arduino_secrets.h"
+waterBTN#include "arduino_secrets.h"
 #include <WiFi.h>
 #include <WiFiServer.h>
 #include <HTTPClient.h>
@@ -15,10 +15,9 @@ const char* ssid = "KTH-IoT";
 const char* password = "H2Oasis12";
 const char* apiURL = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update"; // API URL for ESP32 to send a post request to
 
-const char* espURL = "http://192.16.146.162/settings"; // NOTICE!!! This is going to be used to send the POST request too.
+const char* espURLs = "http://192.16.146.162/settings"; // NOTICE!!! This is going to be used to send the POST request too.
 
-// const char* espURL = "http://192.16.146.162/shower"; // NOTICE!!! This is going to be used to send the POST request too.
-
+const char* espURLw = "http://192.16.146.162/shower"; // Send a post request to this URL to water the plant
 
 /* IoT Cloud */
 const char THING_ID[] = "d7a62a2c-9ad4-4443-8c7f-162bf6bb10da"; // Thing ID used to authenticate the connected device with cloud IoT
@@ -29,7 +28,7 @@ const char DEVICE_PSW[] = "E6KPUM47BNZ8RQWQHYQ3"; // Device secret password to c
 /* origin setting on ESP32 */
 int plantMoist = 0;
 bool autoMode = true;
-bool btnPressed = false;
+bool waterBTN = false;
   
 
 /* Pin connections */
@@ -79,9 +78,9 @@ void setup()
     //nothing and dont remove it
   }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
   {
-    StaticJsonDocument<200> doc;
+    StaticJsonDocument<200> doc1;
   
-    DeserializationError error = deserializeJson(doc,(const char*)data);
+    DeserializationError error = deserializeJson(doc1,(const char*)data);
     if (error) 
     {
       Serial.print("deserializeJson() failed! ");
@@ -89,9 +88,8 @@ void setup()
       return;
     } 
 
-    plantMoist = doc["MoistLevel"];  //Get sensor type value
-    autoMode = doc["AutoMode"]; //Get sensor type value
-    waterBTN = doc["water"];                          //Get value of sensor measurement
+    plantMoist = doc1["MoistLevel"];  //Get sensor type value
+    autoMode = doc1["AutoMode"]; //Get sensor type value
  
     Serial.println();
     Serial.println("----- NEW DATA FROM CLIENT ----");
@@ -107,6 +105,34 @@ void setup()
 
     request->send(201, "OK", "Post request recieved");
   });
+
+  /* POST reqest for showering the plant */
+  server.on("/shower", HTTP_POST, [](AsyncWebServerRequest *request)
+  {
+    //nothing and dont remove it
+  }, NULL, [](AsyncWebServerRequest *request, uint8_t *data2, size_t len, size_t index, size_t total)
+  {
+    StaticJsonDocument<200> doc2;
+  
+    DeserializationError error = deserializeJson(doc2,(const char*)data2);
+    if (error) 
+    {
+      Serial.print("deserializeJson() failed! ");
+      Serial.println(error.c_str());
+      return;
+    } 
+    waterBTN = doc2["water"];
+ 
+    Serial.println();
+    Serial.println("----- NEW DATA FROM CLIENT ----");
+ 
+    Serial.print("watering status: ");
+    Serial.println(waterBTN);
+    Serial.println("------------------------------");
+
+    request->send(201, "OK", "Post request recieved and let it rain");
+  
+  });  
 
   server.begin();
 }
