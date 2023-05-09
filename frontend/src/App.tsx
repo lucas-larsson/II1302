@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { BrowserRouter as Router, Link, Routes, Route , useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import FrontPagePresenter from './Presenter/FrontPagePresenter';
@@ -7,12 +6,11 @@ import UserSignUpPresenter from './Presenter/UserSignUpPresenter';
 import UserProfilePresenter from './Presenter/UserProfilePresenter';
 
 import { Nav, NavList, NavItem } from './Styles/NavStyles';
-import { Button, InnerBox, Title } from './Styles/BaseStyles';
+import { InnerBox } from './Styles/BaseStyles';
 import MainPageAuthPresenter from './Presenter/MainPageAuthPresenter';
 import { ReactComponent as Ripple } from './Icons/ripple.svg';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
-import { setAuthenticated, setSession, setUser } from './store/authSlice';
 import { LogOut } from './Presenter/LogOut';
 
 
@@ -50,7 +48,6 @@ function App() {
             </NavList>
           )
           }
-          
         
       </Nav>
       {isAuthenticated ? (
@@ -75,17 +72,6 @@ function App() {
 
 export default App;
 
-const NavButton = styled(Button)`
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1.2rem;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    color: #f0f3bd;
-  }
-`
 const NavLink = styled(Link)`
   color: white;
   text-decoration: none;

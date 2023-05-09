@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 import { InnerBox, OuterBox, Button, Title, Text} from '../Styles/BaseStyles';
-import { Slider} from '../Styles/Slider';
+import Slider from '../Styles/Slider';
 import { ReactComponent as WaterDrop } from '../Icons/water-drop.svg';
+import { Timestamp } from 'firebase/firestore';
 
 interface Props {
-  //whatever props is needed will be put here like text:String
+  lastWatered:string;
+  moistureLevel:number;
+  setIOTDeviceMoistureLevel:(newLevel:number)=>void;
 }
 
 function FrontPageView(props: Props) {
@@ -16,7 +19,7 @@ function FrontPageView(props: Props) {
           <Text>
             <b>
             Last time watered:
-            </b> XX:XX
+            </b> {props.lastWatered}
           </Text>
         </InnerBox>
 
@@ -24,21 +27,17 @@ function FrontPageView(props: Props) {
           <Text>
             <b>
           Current moisture level:
-            </b> XX%
+            </b> {props.moistureLevel}%
           </Text>
         </InnerBox>
       </OuterBox>
 
-      <Text>move the slider to change the moisture level</Text>
+      <Text>Minimum level of moisture for automatic watering</Text>
 
-      <Slider 
-        type="range"
-        min="1" 
-        max="100"
-      />
+      <Slider setMoisture={props.setIOTDeviceMoistureLevel}/>
 
 
-      <Text>Click the button below to water the plant</Text>
+      <Text>Click the button below to manually water the plant</Text>
 
       <Button>
         <WaterDrop width={32} height={32} /> Water
