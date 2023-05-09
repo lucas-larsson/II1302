@@ -20,6 +20,7 @@ const char* espURL = "http://192.16.146.162/settings"; // NOTICE!!! This is goin
 // const char* espURL = "http://192.16.146.162/shower"; // NOTICE!!! This is going to be used to send the POST request too.
 
 
+
 /* IoT Cloud */
 const char THING_ID[] = "d7a62a2c-9ad4-4443-8c7f-162bf6bb10da"; // Thing ID used to authenticate the connected device with cloud IoT
 const char DEVICE_ID[] = "264ca76b-f1d2-47ba-9379-4f34725035c8";  // Device ID which is connected with cloud IoT
@@ -89,7 +90,9 @@ void setup()
       return;
     } 
 
+
     plantMoist = doc["MoistLevel"];  //Get sensor type value
+
     autoMode = doc["AutoMode"]; //Get sensor type value
     waterBTN = doc["water"];                          //Get value of sensor measurement
  

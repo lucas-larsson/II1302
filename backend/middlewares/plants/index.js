@@ -65,11 +65,11 @@ const updatePlantData = async (req, res, next) => {
 };
 
 const waterPlant = async (req, res, next) => {
-  const { device_id } = res.locals.plant;
+  const { iot_device_id } = req.body;
   try {
     const response = await postRequest(true);
-    if (response === 'success') {
-      await plantsDAO.waterPlant(device_id);
+    if (response.statusText === 'success') {
+      res.locals.outData = await plantsDAO.waterPlant(response);
       next();
     }
   } catch (err) {
