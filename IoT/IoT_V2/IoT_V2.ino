@@ -1,14 +1,21 @@
+#include "arduino_secrets.h"
 #include <WiFi.h>
 #include <WiFiServer.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-#include "thingProperties.h"
+//#include "thingProperties.h"
+#include "ESPAsyncWebServer.h"
+#include "AsyncJson.h"
+
+#define true 1
+#define false 0
 
 /* Network connections */
-const char* ssid = "Natrium50";
-const char* password = "Molodets100";
+const char* ssid = "KTH-IoT";
+const char* password = "H2Oasis12";
 const char* apiURL = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update"; // API URL for ESP32 to send a post request to
-const char* espURL = "http://193.10.38.237"; //Don't need to use atm
+
+const char* espURL = "http://192.16.146.162"; // NOTICE!!! This is going to be used to send the POST request too.
 
 
 /* IoT Cloud */
@@ -16,22 +23,12 @@ const char THING_ID[] = "d7a62a2c-9ad4-4443-8c7f-162bf6bb10da"; // Thing ID used
 const char DEVICE_ID[] = "264ca76b-f1d2-47ba-9379-4f34725035c8";  // Device ID which is connected with cloud IoT
 const char DEVICE_PSW[] = "E6KPUM47BNZ8RQWQHYQ3"; // Device secret password to connect with the device
 
-
-char api_server[] = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/";  // API URL used to for ESP32 to listen too
-char endpoint[] = "/api/data/"; // end point which yet has to be stated
-
-
+ 
 /* origin setting on ESP32 */
 int plantMoist = 0;
-bool currentAutoMode = true;
-bool currentWater = false;
-
-
-/* TEST - variabels to update */ 
-int m;  
-bool a_m;
-bool btn;
-
+bool autoMode = true;
+bool btnPressed = false;
+  
 
 /* Pin connections */
 const int moistureSensorPin = 33;
@@ -43,17 +40,17 @@ const int LED_Y = 14;
 
 /* Time related variabels */
 unsigned long lastTime = 0;
-unsigned long timerDelay = 6000;
+unsigned long timerDelay = 10000;
 
 
 WiFiClient client;
 HTTPClient http;
-WiFiServer server(80); //create a new web server listening on port 80
+AsyncWebServer server(80);
 
 void setup() 
 {
   Serial.begin(115200);
-  initProperties();
+  //initProperties();
   
   pinMode(LED_R, OUTPUT);
   pinMode(LED_G, OUTPUT);
@@ -69,94 +66,61 @@ void setup()
     delay(1000);
     Serial.print(".");
   }
-  
-  Serial.println("");
-  ArduinoCloud.begin(ArduinoIoTPreferredConnection);
-  setDebugMessageLevel(2);
-  server.begin();
+  Serial.println("Connected to WiFi with IP: ");
+  Serial.println(WiFi.localIP());
+  //ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  //setDebugMessageLevel(2);
   Serial.println("Timer set to 10 minutes (timerDelay variable), it will take 10 minutes before publishing the first reading.");
+  
+  server.on("/settings", HTTP_POST, [](AsyncWebServerRequest *request)
+  {
+    //nothing and dont remove it
+  }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+  {
+    StaticJsonDocument<200> doc;
+  
+    DeserializationError error = deserializeJson(doc,(const char*)data);
+    if (error) 
+    {
+      Serial.print("deserializeJson() failed! ");
+      Serial.println(error.c_str());
+      return;
+    } 
+
+    plantMoist = doc["MoistLevel"];           //Get sensor type value
+    autoMode = doc["AutoMode"]; //Get sensor type value
+    waterBTN = doc["water"];                          //Get value of sensor measurement
+ 
+    Serial.println();
+    Serial.println("----- NEW DATA FROM CLIENT ----");
+ 
+    Serial.print("New plant Moisture level set: ");
+    Serial.println(plantMoist);
+ 
+    Serial.print("Automode has set to: ");
+    Serial.println(autoMode); 
+    Serial.print("watering status: ");
+    Serial.println(waterBTN);
+    Serial.println("------------------------------");
+
+    request->send(201, "OK", "Post request recieved");
+  });
+
+  server.begin();
 }
 
 void loop() 
 {
-  WiFiClient client = server.available(); //check for incoming client connections
-
-  if (client) 
-  {
-    Serial.println("New client connected!");
-    String currentLine = "";
-    while (client.connected()) 
-    {
-      if (client.available()) 
-      {
-        char c = client.read();
-        if(c == '\n')
-        {
-          break; // End of HTTP request header
-        }
-        else if (c != '\r')
-        {
-          currentLine += c;
-        }
-      }
-    }
-
-    if (currentLine.startsWith("POST " + String(endpoint))) 
-    {
-      Serial.println("Received POST request");
-      // Parse JSON payload
-      String jsonPayload = client.readStringUntil('\n');
-      Serial.println("Received JSON payload: " + jsonPayload);
-      DynamicJsonDocument doc(256);
-      DeserializationError error = deserializeJson(doc, jsonPayload);
-      Serial.println(error.c_str());
-    
-      if (error) 
-      {
-        Serial.println("Failed to deserialize JSON body");
-      } 
-      else 
-      {
-        if (doc.containsKey("Moistlevel")) 
-        {
-          m = doc["Moistlevel"];
-        }
-        if (doc.containsKey("AutoMode")) 
-        {
-          a_m = doc["AutoMode"];
-        }
-        if (doc.containsKey("water")) 
-        {
-          btn = doc["water"];
-        }
-        
-        client.println("HTTP/1.1 200 OK");
-        client.println("Content-Type: text/html");
-        client.println("Connection: close"); 
-        client.println();
-        client.println("Received JSON payload:");
-        client.println(jsonPayload);
-      }
-    }
-    else
-    {
-      Serial.println("Invalid HTTP request");
-      client.println("HTTP/1.1 404 Not Found");
-      client.println("Content-Type: text/html");
-      client.println("Connection: close");
-      client.println();
-      client.println("Invalid HTTP request");
-    }
-    delay(1);
-    client.stop(); //close the client connection
-    Serial.println("Client disconnected");
-   }
-  ArduinoCloud.update();
+   
+  /* If button is pressed then water a few seconds and turn off. */
+  
+ 
 
   if ((millis() - lastTime) > timerDelay) 
-  {
+  { 
+    digitalWrite(pumpControlPin, LOW);
+    waterBTN == false;   
     int moistureLevel = readMoistureLevel();
-    
     if( moistureLevel <= 20)
     {
       digitalWrite(LED_R, HIGH);
@@ -183,6 +147,19 @@ void loop()
   }
 }
 
+/*
+void waerPlant()
+{
+  if(waterBTN == true)
+  {
+    digitalWrite(pumpControlPin, HIGH);
+    delay(50);
+    digitalWrite(pumpControlPin, LOW);
+    waterBTN == false;    
+  }
+}
+*/
+
 int readMoistureLevel() 
 {
   long sensorValue = analogRead(moistureSensorPin);
@@ -194,15 +171,14 @@ int readMoistureLevel()
   return moistPercent;
 }
 
+
 void controlMotorPump(int moistureLevel, int threshold) 
 {
   int plant_moist = threshold;
-
-  if(currentAutoMode == true)
+  if(autoMode == true)
   {
-    if(moistureLevel < plant_moist || currentWater == true)
+    if(moistureLevel < plant_moist)
     {
-     
       Serial.println("Turn pump on!!");
       while (true)
       {
@@ -216,7 +192,7 @@ void controlMotorPump(int moistureLevel, int threshold)
           digitalWrite(LED_R, LOW);
           digitalWrite(LED_Y, LOW);
           digitalWrite(LED_G, HIGH);
-          currentWater = false; //reset water button          
+          waterBTN = false; //reset water button
           break;
         }
         delay(1000);
@@ -228,28 +204,15 @@ void controlMotorPump(int moistureLevel, int threshold)
       digitalWrite(pumpControlPin, LOW);
     }
   }
-  
-
-  if(currentAutoMode == false)
+  else
   {
-    if(currentWater == true)
+    if(moistureLevel < plant_moist)
     {
-      while (true)
-      {
-        moistureLevel = readMoistureLevel();
-        digitalWrite(pumpControlPin, HIGH);
- 
-        if(moistureLevel >= plant_moist)
-        {
-          digitalWrite(pumpControlPin, LOW);
-          currentWater = false; //reset water button  
-          break;
-        }
-        delay(1000);
-      }
+      Serial.print("Soil is dry! Please water the plant!");
     }
   }
 }
+
 
 void updatePlantMoistureLevel(int moistureLevel) 
 {
@@ -259,7 +222,7 @@ void updatePlantMoistureLevel(int moistureLevel)
     // Create a JSON object
     StaticJsonDocument<200> jsonDoc;
     jsonDoc["moisture_level"] =  moistureLevel;
-    jsonDoc["last_watered"] = ("2023-04-25 15:30:00");
+    jsonDoc["last_watered"] = "2023-04-25 15:30:00";
     jsonDoc["iot_device_id"] = 123;
     jsonDoc["iot_device_password"] = "password";
    
