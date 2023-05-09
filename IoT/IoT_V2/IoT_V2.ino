@@ -15,7 +15,9 @@ const char* ssid = "KTH-IoT";
 const char* password = "H2Oasis12";
 const char* apiURL = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update"; // API URL for ESP32 to send a post request to
 
-const char* espURL = "http://192.16.146.162"; // NOTICE!!! This is going to be used to send the POST request too.
+const char* espURL = "http://192.16.146.162/settings"; // NOTICE!!! This is going to be used to send the POST request too.
+
+// const char* espURL = "http://192.16.146.162/shower"; // NOTICE!!! This is going to be used to send the POST request too.
 
 
 /* IoT Cloud */
@@ -87,7 +89,7 @@ void setup()
       return;
     } 
 
-    plantMoist = doc["MoistLevel"];           //Get sensor type value
+    plantMoist = doc["MoistLevel"];  //Get sensor type value
     autoMode = doc["AutoMode"]; //Get sensor type value
     waterBTN = doc["water"];                          //Get value of sensor measurement
  
