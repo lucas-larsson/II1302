@@ -47,6 +47,15 @@ const getPlantData = async (device_id) => {
   }
 };
 
+const getPlantDataWithDate = async (device_id, start_date, end_date) => {
+  const query = `SELECT * FROM plant_data WHERE device_id = $1 AND last_watered BETWEEN $2 AND $3 ORDER BY last_watered DESC`;
+  try {
+    return (await sendQuery(query, [device_id, start_date, end_date])).rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   plantsDAO: {
     iotExists,
@@ -54,5 +63,6 @@ module.exports = {
     waterPlant,
     iotExistsByDeviceId,
     getPlantData,
+    getPlantDataWithDate,
   },
 };

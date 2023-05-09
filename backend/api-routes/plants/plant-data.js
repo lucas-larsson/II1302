@@ -1,10 +1,11 @@
 const plants = require('../../middlewares/plants'),
-  responseMiddleware = require('../../middlewares/response');
-
+  responseMiddleware = require('../../middlewares/response'),
+  auth = require('../../middlewares/auth');
 module.exports = {
   post: [
     plants.initLocals,
-    plants.iotExistsByDeviceId,
+    auth.authorizeSession,
+    plants.getPlantDataWithDate,
     responseMiddleware.sendResponse(201, 'outData'),
   ],
 };
@@ -17,7 +18,7 @@ module.exports.post.apiDoc = {
     content: {
       'application/json': {
         schema: {
-          $ref: '#/components/schemas/UpdatePlantData',
+          $ref: '#/components/schemas/PlantDateInformation',
         },
       },
     },

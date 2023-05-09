@@ -99,6 +99,22 @@ const getPlantData = async (req, res, next) => {
   }
 };
 
+const getPlantDataWithDate = async (req, res, next) => {
+  const { start_date, end_date, iot_device_id } = req.body;
+  try {
+    res.locals.outData = await plantsDAO.getPlantDataWithDate(iot_device_id, start_date, end_date);
+    return next();
+  } catch (err) {
+    console.error('Error in getPlantDataWithDate: ', err.message);
+    return next(
+      errorCodes.serverError({
+        req,
+        message: 'Could not get plant data',
+      })
+    );
+  }
+};
+
 module.exports = {
   initLocals,
   iotExists,
@@ -106,4 +122,5 @@ module.exports = {
   waterPlant,
   iotExistsByDeviceId,
   getPlantData,
+  getPlantDataWithDate,
 };
