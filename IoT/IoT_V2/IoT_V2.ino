@@ -1,11 +1,11 @@
-#include "arduino_secrets.h"
 #include <WiFi.h>
 #include <WiFiServer.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-//#include "thingProperties.h"
 #include "ESPAsyncWebServer.h"
 #include "AsyncJson.h"
+#include <WiFiUdp.h>
+#include <NTPClient.h>
 
 #define true 1
 #define false 0
@@ -15,7 +15,9 @@ const char* ssid = "KTH-IoT";
 const char* password = "H2Oasis12";
 const char* apiURL = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update"; // API URL for ESP32 to send a post request to
 
-const char* espURL = "http://192.16.146.162"; // NOTICE!!! This is going to be used to send the POST request too.
+const char* espURLs = "http://192.16.146.162/settings"; // NOTICE!!! This is going to be used to send the POST request too.
+
+const char* espURLw = "http://192.16.146.162/shower"; // Send a post request to this URL to water the plant
 
 
 /* IoT Cloud */
@@ -27,7 +29,7 @@ const char DEVICE_PSW[] = "E6KPUM47BNZ8RQWQHYQ3"; // Device secret password to c
 /* origin setting on ESP32 */
 int plantMoist = 0;
 bool autoMode = true;
-bool btnPressed = false;
+bool waterBTN = false;
   
 
 /* Pin connections */
@@ -41,6 +43,14 @@ const int LED_Y = 14;
 /* Time related variabels */
 unsigned long lastTime = 0;
 unsigned long timerDelay = 10000;
+String last_watered;
+
+/* NTP client (get current time and date) */
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
+String formattedDate;
+String dayStamp;
+String timeStamp;
 
 
 WiFiClient client;
@@ -77,9 +87,9 @@ void setup()
     //nothing and dont remove it
   }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
   {
-    StaticJsonDocument<200> doc;
+    StaticJsonDocument<200> doc1;
   
-    DeserializationError error = deserializeJson(doc,(const char*)data);
+    DeserializationError error = deserializeJson(doc1,(const char*)data);
     if (error) 
     {
       Serial.print("deserializeJson() failed! ");
@@ -87,9 +97,16 @@ void setup()
       return;
     } 
 
-    plantMoist = doc["MoistLevel"];           //Get sensor type value
+<<<<<<< HEAD
+    plantMoist = doc1["MoistLevel"];  //Get sensor type value
+    autoMode = doc1["AutoMode"]; //Get sensor type value
+=======
+
+    plantMoist = doc["MoistLevel"];  //Get sensor type value
+
     autoMode = doc["AutoMode"]; //Get sensor type value
     waterBTN = doc["water"];                          //Get value of sensor measurement
+>>>>>>> bdb16e174e7706c5124cd34b0d2093670a9cd15a
  
     Serial.println();
     Serial.println("----- NEW DATA FROM CLIENT ----");
@@ -106,13 +123,59 @@ void setup()
     request->send(201, "OK", "Post request recieved");
   });
 
+  /* POST reqest for showering the plant */
+  server.on("/shower", HTTP_POST, [](AsyncWebServerRequest *request)
+  {
+    //nothing and dont remove it
+  }, NULL, [](AsyncWebServerRequest *request, uint8_t *data2, size_t len, size_t index, size_t total)
+  {
+    StaticJsonDocument<200> doc2;
+  
+    DeserializationError error = deserializeJson(doc2,(const char*)data2);
+    if (error) 
+    {
+      Serial.print("deserializeJson() failed! ");
+      Serial.println(error.c_str());
+      return;
+    } 
+    waterBTN = doc2["water"];
+ 
+    Serial.println();
+    Serial.println("----- NEW DATA FROM CLIENT ----");
+ 
+    Serial.print("watering status: ");
+    Serial.println(waterBTN);
+    Serial.println("------------------------------");
+
+    request->send(201, "OK", "Post request recieved and let it rain");
+  
+  });  
+
   server.begin();
+
+  /* Initialize a NTPClient and to get time */
+  timeClient.begin();
+  // Set offset time in seconds to adjust for your timezone, for example:
+  // GMT +2 = 7200
+  // GMT +1 = 3600
+  // GMT +8 = 28800
+  // GMT -1 = -3600
+  // GMT 0 = 0
+  timeClient.setTimeOffset(7200);
 }
 
 void loop() 
 {
    
-  /* If button is pressed then water a few seconds and turn off. */
+  while(!timeClient.update()) 
+  {
+    timeClient.forceUpdate();
+  }
+  // The formattedDate comes with the following format:
+  // 2018-05-28T16:00:13Z
+  // We need to extract date and time
+  formattedDate = timeClient.getFormattedDate();
+  Serial.println(formattedDate);
   
  
 
@@ -193,6 +256,7 @@ void controlMotorPump(int moistureLevel, int threshold)
           digitalWrite(LED_Y, LOW);
           digitalWrite(LED_G, HIGH);
           waterBTN = false; //reset water button
+          last_watered = timeClient.getFormattedDate();
           break;
         }
         delay(1000);
@@ -222,7 +286,7 @@ void updatePlantMoistureLevel(int moistureLevel)
     // Create a JSON object
     StaticJsonDocument<200> jsonDoc;
     jsonDoc["moisture_level"] =  moistureLevel;
-    jsonDoc["last_watered"] = "2023-04-25 15:30:00";
+    jsonDoc["last_watered"] = last_watered;
     jsonDoc["iot_device_id"] = 123;
     jsonDoc["iot_device_password"] = "password";
    
