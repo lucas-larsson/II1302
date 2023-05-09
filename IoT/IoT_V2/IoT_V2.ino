@@ -1,11 +1,11 @@
-waterBTN#include "arduino_secrets.h"
 #include <WiFi.h>
 #include <WiFiServer.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-//#include "thingProperties.h"
 #include "ESPAsyncWebServer.h"
 #include "AsyncJson.h"
+#include <WiFiUdp.h>
+#include <NTPClient.h>
 
 #define true 1
 #define false 0
@@ -42,6 +42,14 @@ const int LED_Y = 14;
 /* Time related variabels */
 unsigned long lastTime = 0;
 unsigned long timerDelay = 10000;
+String last_watered;
+
+/* NTP client (get current time and date) */
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
+String formattedDate;
+String dayStamp;
+String timeStamp;
 
 
 WiFiClient client;
@@ -135,12 +143,30 @@ void setup()
   });  
 
   server.begin();
+
+  /* Initialize a NTPClient and to get time */
+  timeClient.begin();
+  // Set offset time in seconds to adjust for your timezone, for example:
+  // GMT +2 = 7200
+  // GMT +1 = 3600
+  // GMT +8 = 28800
+  // GMT -1 = -3600
+  // GMT 0 = 0
+  timeClient.setTimeOffset(7200);
 }
 
 void loop() 
 {
    
-  /* If button is pressed then water a few seconds and turn off. */
+  while(!timeClient.update()) 
+  {
+    timeClient.forceUpdate();
+  }
+  // The formattedDate comes with the following format:
+  // 2018-05-28T16:00:13Z
+  // We need to extract date and time
+  formattedDate = timeClient.getFormattedDate();
+  Serial.println(formattedDate);
   
  
 
@@ -221,6 +247,7 @@ void controlMotorPump(int moistureLevel, int threshold)
           digitalWrite(LED_Y, LOW);
           digitalWrite(LED_G, HIGH);
           waterBTN = false; //reset water button
+          last_watered = timeClient.getFormattedDate();
           break;
         }
         delay(1000);
@@ -250,7 +277,7 @@ void updatePlantMoistureLevel(int moistureLevel)
     // Create a JSON object
     StaticJsonDocument<200> jsonDoc;
     jsonDoc["moisture_level"] =  moistureLevel;
-    jsonDoc["last_watered"] = "2023-04-25 15:30:00";
+    jsonDoc["last_watered"] = last_watered;
     jsonDoc["iot_device_id"] = 123;
     jsonDoc["iot_device_password"] = "password";
    
