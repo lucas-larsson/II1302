@@ -1,8 +1,14 @@
 const plants = require('../../middlewares/plants'),
-  responseMiddleware = require('../../middlewares/response');
+  responseMiddleware = require('../../middlewares/response'),
+  auth = require('../../middlewares/auth');
 
 module.exports = {
-  post: [plants.initLocals, plants.waterPlant, responseMiddleware.sendResponse(200, 'outData')],
+  post: [
+    plants.initLocals,
+    auth.authorizeSession,
+    plants.waterPlant,
+    responseMiddleware.sendResponse(201, 'outData'),
+  ],
 };
 
 module.exports.post.apiDoc = {
@@ -13,18 +19,18 @@ module.exports.post.apiDoc = {
     content: {
       'application/json': {
         schema: {
-          $ref: '#/components/schemas/UpdatePlantData',
+          $ref: '#/components/schemas/WaterCommand',
         },
       },
     },
   },
   responses: {
-    200: {
+    201: {
       description: 'Successfully watered plant',
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/Plant',
+            $ref: '#/components/schemas/PlantData',
           },
         },
       },
