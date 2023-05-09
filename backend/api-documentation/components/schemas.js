@@ -255,6 +255,44 @@ module.exports = {
       },
     },
   },
+  WaterCommand: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['water_now', 'time', 'iot_device_id', 'person_id', 'session_id'],
+    properties: {
+      water_now: {
+        type: 'boolean',
+      },
+      time: {
+        $ref: '#/components/schemas/DateTime',
+      },
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      session_id: {
+        $ref: '#/components/schemas/Uuid',
+      },
+    },
+  },
+  PlantWatered: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['iot_device_id', 'person_id', 'time'],
+    properties: {
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      time: {
+        $ref: '#/components/schemas/DateTime',
+      },
+    },
+  },
   Plant: {
     type: 'object',
     additionalProperties: false,
