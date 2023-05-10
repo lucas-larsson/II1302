@@ -46,7 +46,7 @@ const SliderStyled = styled.input<{ beforeLeft: string; afterRight: string }>`
       border-bottom-left-radius: 0%;
       border-top-left-radius: 0%;
       border-left: 5px solid #32136b;
-      opacity: 0.6;
+      opacity: 0.5;
       background-color: #2a9d8f;
       z-index: 1002;
     }
