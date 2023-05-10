@@ -31,8 +31,8 @@ const SliderStyled = styled.input<{ beforeLeft: string; afterRight: string }>`
       border-radius: 100px;
       border-top-right-radius: 0%;
       border-bottom-right-radius: 0%;
-      opacity: 0.1;
-      background-color: #000;
+      opacity: 0.3;
+      background-color: #1e8579;
       z-index: 1000;
     }
   &::after {
@@ -47,7 +47,7 @@ const SliderStyled = styled.input<{ beforeLeft: string; afterRight: string }>`
       border-top-left-radius: 0%;
       border-left: 5px solid #32136b;
       opacity: 0.5;
-      background-color: #2a9d8f;
+      background-color: #98e098;
       z-index: 1002;
     }
     
