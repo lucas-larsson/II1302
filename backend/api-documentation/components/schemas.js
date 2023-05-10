@@ -327,4 +327,26 @@ module.exports = {
       },
     },
   },
+  PlantDateInformation: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['session_id', 'iot_device_id', 'end_date', 'start_date', 'person_id'],
+    properties: {
+      session_id: {
+        $ref: '#/components/schemas/Uuid',
+      },
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      end_date: {
+        $ref: '#/components/schemas/DateTime',
+      },
+      start_date: {
+        $ref: '#/components/schemas/DateTime',
+      },
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+    },
+  },
 };

@@ -29,5 +29,8 @@ module.exports.get.apiDoc = {
     {
       $ref: '#/components/parameters/plantId',
     },
+    {
+      $ref: '#/components/parameters/sessionId',
+    },
   ],
 };

@@ -295,7 +295,7 @@ const authorizeSession = async (req, res, next) => {
         })
       );
     }
-    res.locals.outData.session = result[0];
+    res.locals.session = result[0];
     next();
   } catch (err) {
     console.error('Error in authorizeSession: ', err.message);
