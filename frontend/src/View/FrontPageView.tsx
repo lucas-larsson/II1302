@@ -34,7 +34,7 @@ function FrontPageView(props: Props) {
 
       <Text>Minimum level of moisture for automatic watering</Text>
 
-      <Slider setMoisture={props.setIOTDeviceMoistureLevel}/>
+      <Slider setMoisture={props.setIOTDeviceMoistureLevel} beforeLeft="15%" afterRight="35%"/>
 
 
       <Text>Click the button below to manually water the plant</Text>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const SliderStyled = styled.input`
+const SliderStyled = styled.input<{ beforeLeft: string; afterRight: string }>`
   -webkit-appearance: none;
   overflow: hidden;
   width: 50%;
@@ -26,12 +26,12 @@ const SliderStyled = styled.input`
       position: absolute;
       top: 298px;
       left: 25%;
-      width: 15%;
+      width: ${({ beforeLeft }) => beforeLeft};
       height: 25px;
       border-radius: 100px;
       border-top-right-radius: 0%;
       border-bottom-right-radius: 0%;
-      border-right: 5px solid #fff;
+      border-right: 5px solid #000;
       opacity: 0.1;
       background-color: #000;
       z-index: 1000;
@@ -41,14 +41,14 @@ const SliderStyled = styled.input`
       position: absolute;
       top: 298px;
       right: 25%;
-      width: 35%;
+      width: ${({ afterRight }) => afterRight};
       height: 25px;
       border-radius: 100px;
       border-bottom-left-radius: 0%;
       border-top-left-radius: 0%;
-      border-left: 5px solid #fff;
+      border-left: 5px solid #000;
       opacity: 0.3;
-      background-color: #98e098c7;
+      background-color: #2a9d8f;
       z-index: 1002;
     }
     
@@ -60,6 +60,8 @@ const SliderValue = styled.span`
 
 interface Props {
   setMoisture: (value: number) => void;
+  beforeLeft: string;
+  afterRight: string;
 }
 
 export default function Slider(props: Props) {
@@ -78,8 +80,10 @@ export default function Slider(props: Props) {
         min="0"
         max="100"
         step="10"
-        value={sliderValue}
+        value={sliderValue}        
         onChange={updateMinMoistureCB}
+        beforeLeft={props.beforeLeft} /* pass the beforeLeft prop */
+        afterRight={props.afterRight} /* pass the afterRight prop */
       ></SliderStyled>
       <SliderValue>{sliderValue}%</SliderValue>
     </>
