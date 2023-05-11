@@ -45,9 +45,7 @@ export default function UserProfilePresenter() {
   
     if (response.ok) {
       const data = await response.json();
-      //const formattedDateString = formatDateTime(new Date(data.last_watered));
-      setPlantData(data); //NEEDS TO BE CHANGED ONCE API ENDPOINT FOR LIST OF JSON OBJECTS IS COMPLETE, TEMPORARY
-      console.log(data);
+      setPlantData(data); 
     } else {
       let errorText = "";
   
