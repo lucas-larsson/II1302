@@ -19,7 +19,7 @@ export default function UserProfilePresenter() {
 
     const currentDate = new Date();
     const twelveMonthsAgo = new Date();
-    twelceMonthsAgo.setMonth(currentDate.getMonth() - 12);
+    twelveMonthsAgo.setMonth(currentDate.getMonth() - 12);
     const iotDeviceId = 123; // replace with actual IoT device ID
     const endDate = formatDateToData(currentDate); // replace with actual end date
     const startDate = formatDateToData(twelveMonthsAgo); // replace with actual start date
