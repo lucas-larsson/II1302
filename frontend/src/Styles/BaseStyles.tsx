@@ -31,6 +31,14 @@ const Title = styled.h1`
   margin: 2rem;
   padding: 8px;
 `;
+const SmallTitle = styled.h1`
+  font-size: 26px;
+  font-weight: bold;
+  text-align: center;
+  color: #2a9d8f;
+  margin: 2rem;
+  padding: 8px;
+`;
 
 const Text = styled.p`
   font-size: 20px;
@@ -98,4 +106,4 @@ const Input = styled.input`
 
 
 
-export { OuterBox, InnerBox, Button, RedButton, Input, Title, Text, ErrorText };
+export { OuterBox, InnerBox, Button, RedButton, Input, Title, Text, ErrorText, SmallTitle };

@@ -58,7 +58,7 @@ export default function UserSignUpPresenter() {
       setErrorMsg(""); // Clear any previous error message
       dispatch(setAuthenticated(true));
       dispatch(setUser(user));
-      dispatch(setSession(session));
+      dispatch(setSession(session[0]));
 
       // Navigate to the home page
       navigate("/");

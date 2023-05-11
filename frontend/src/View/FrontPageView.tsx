@@ -8,9 +8,16 @@ interface Props {
   lastWatered:string;
   moistureLevel:number;
   setIOTDeviceMoistureLevel:(newLevel:number)=>void;
+  waterPlant:()=>void;
 }
 
 function FrontPageView(props: Props) {
+
+  function waterPlantCB(){
+    //send message to user
+    props.waterPlant();
+  }
+
   return (
     <OuterBox>
       <Text />
@@ -39,7 +46,7 @@ function FrontPageView(props: Props) {
 
       <Text>Click the button below to manually water the plant</Text>
 
-      <Button>
+      <Button onClick={waterPlantCB}>
         <WaterDrop width={32} height={32} /> Water
       </Button>
       <Text />
