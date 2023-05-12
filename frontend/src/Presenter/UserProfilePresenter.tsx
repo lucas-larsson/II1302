@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from "../store/store";
 import { timeStamp } from "console";
 import { formatDateToData } from "../Helpers/Formatting";
+import URL from "../API";
 
 export default function UserProfilePresenter() {
   const [plantData, setPlantData] = useState([]);
@@ -26,36 +27,34 @@ export default function UserProfilePresenter() {
     const personId = user?.person_id; // replace with actual person ID
     const sessionId = session?.session_id; // replace with actual person ID
   
-    const response = await fetch(
-      "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/plant-data",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          session_id: sessionId,
-          iot_device_id: iotDeviceId,
-          end_date: endDate,
-          start_date: startDate,
-          person_id: personId,
-        }),
+    try {
+      const response = await fetch(
+        `${URL}plants/plant-data`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            session_id: sessionId,
+            iot_device_id: iotDeviceId,
+            end_date: endDate,
+            start_date: startDate,
+            person_id: personId,
+          }),
+        }
+      );
+    
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    );
-  
-    if (response.ok) {
+    
       const data = await response.json();
-      setPlantData(data); 
-    } else {
-      let errorText = "";
-  
-      switch (response.status) {
-        default:
-          errorText = `An error occurred: ${response.status + response.statusText + JSON.stringify(response.json)}`;
-      }
-  
-      console.log(errorText);
+      setPlantData(data);
+    } catch (error) {
+      console.log(`An error occurred: ${error}`);
     }
+    
   }
   
 

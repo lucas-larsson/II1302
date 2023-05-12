@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { containsNumber, containsSymbol, isValidEmail } from "../Helpers/Formatting";
 import { useDispatch } from "react-redux";
 import { setAuthenticated, setUser, setSession } from "../store/authSlice";
+import URL from "../API";
 
 export default function UserSignUpPresenter() {
   const [errorMsg, setErrorMsg] = React.useState<string>("");
@@ -33,23 +34,35 @@ export default function UserSignUpPresenter() {
       return;
     }
 
-    const response = await fetch(
-      "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/signup/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: firstName,
-          surname: lastName,
-          email: email,
-          password: password,
-        }),
+    try {
+      const response = await fetch(
+        `${URL}signup/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: firstName,
+            surname: lastName,
+            email: email,
+            password: password,
+          }),
+        }
+      );
+    
+      if (!response.ok) {
+        let errorText = "";
+        switch (response.status) {
+          case 400:
+            errorText = "There is already a user with this email address. Please try another email or log in.";
+            break;
+          default:
+            errorText = `An error occurred: ${response.statusText}`;
+        }
+        throw new Error(errorText);
       }
-    );
-
-    if (response.ok) {
+    
       const data = await response.json();
       const user = data.user;
       const session = data.session;
@@ -59,22 +72,16 @@ export default function UserSignUpPresenter() {
       dispatch(setAuthenticated(true));
       dispatch(setUser(user));
       dispatch(setSession(session[0]));
-
+    
       // Navigate to the home page
       navigate("/");
-    } else {
-      let errorText = "";
-
-      switch (response.status) {
-        case 400:
-          errorText = "There is already a user with this email address. Please try another email or log in.";
-          break;
-        default:
-          errorText = `An error occurred: ${response.statusText}`;
+    } catch (error) {
+      if (error instanceof Error) { // This is a type guard
+        console.log(error.message);
+        setErrorMsg(error.message);
       }
-      console.log(errorText);
-      setErrorMsg(errorText);
     }
+    
   }
 
   return <UserSignUpView signUp={signUp} errorMsg={errorMsg}></UserSignUpView>;

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { containsNumber, containsSymbol, isValidEmail } from "../Helpers/Formatting";
 import { useDispatch } from "react-redux";
 import { setAuthenticated, setUser, setSession } from "../store/authSlice";
-
+import URL from "../API";
 
 export default function UserLogInPresenter() {
   const [errorMsg, setErrorMsg] = React.useState<string>("");
@@ -23,21 +23,33 @@ export default function UserLogInPresenter() {
       return;
     }
 
-    const response = await fetch(
-      "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/login/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+    try {
+      const response = await fetch(
+        `${URL}login/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        }
+      );
+    
+      if (!response.ok) {
+        let errorText = "";
+        switch (response.status) {
+          case 400:
+            errorText = "No email found with that password.";
+            break;
+          default:
+            errorText = `An error occurred: ${response.statusText}`;
+        }
+        throw new Error(errorText);
       }
-    );
-
-    if (response.ok) {
+    
       const data = await response.json();
       const user = data.user;
       const session = data.session;
@@ -47,22 +59,15 @@ export default function UserLogInPresenter() {
       dispatch(setAuthenticated(true));
       dispatch(setUser(user));
       dispatch(setSession(session[0]));
-
+    
       // Navigate to the home page
       navigate("/");
-    } else {
-      let errorText = "";
-
-      switch (response.status) {
-        case 400:
-          errorText = "No email found with that password.";
-          break;
-        default:
-          errorText = `An error occurred: ${response.statusText}`;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+        setErrorMsg(error.message);
       }
-      console.log(errorText);
-      setErrorMsg(errorText);
-    }
+    }    
   }
 
   return <UserLogInView logIn={logIn}></UserLogInView>;
