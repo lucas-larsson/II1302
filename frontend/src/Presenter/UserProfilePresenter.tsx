@@ -19,11 +19,11 @@ export default function UserProfilePresenter() {
   async function getPlantData() {
 
     const currentDate = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(currentDate.getMonth() - 1);
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(currentDate.getMonth() - 12);
     const iotDeviceId = 123; // replace with actual IoT device ID
     const endDate = formatDateToData(currentDate); // replace with actual end date
-    const startDate = formatDateToData(oneMonthAgo); // replace with actual start date
+    const startDate = formatDateToData(twelveMonthsAgo); // replace with actual start date
     const personId = user?.person_id; // replace with actual person ID
     const sessionId = session?.session_id; // replace with actual person ID
   
