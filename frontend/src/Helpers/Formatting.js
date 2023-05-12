@@ -15,7 +15,7 @@ function containsNumber(inputString) {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(email);
   }
-  function formatDateTime(date){
+  function formatDateFromData(date){
 
     return date.toLocaleString("en-US", {
       year: "numeric",
@@ -28,4 +28,10 @@ function containsNumber(inputString) {
     });
   }
 
-  export {containsNumber, containsSymbol, isValidEmail, formatDateTime}
+  function formatDateToData(date) {
+    let formattedDate = date.toISOString().slice(0, 19).replace("T", " ") + ".000000";
+    return formattedDate;
+  }
+
+
+  export {containsNumber, containsSymbol, isValidEmail, formatDateFromData, formatDateToData}
