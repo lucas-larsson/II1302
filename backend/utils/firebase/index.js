@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 
-const serviceAccount = require(process.env.RTDB_KEY_PATH);
+const serviceAccount = require(process.env.RTDB_KEY);
 const RTDB_URL = process.env.RTDB_URL;
 
 admin.initializeApp({
