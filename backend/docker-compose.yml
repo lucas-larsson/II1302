@@ -16,6 +16,8 @@ services:
       BACKEND_PORT: $BACKEND_PORT
       DATABASE_URL: $DATABASE_URL
       NODE_ENV: $NODE_ENV
+      RTDB_KEY_PATH: $RTDB_KEY_PATH
+      RTDB_URL: $RTDB_URL
 
   database:
     image: postgres:alpine
