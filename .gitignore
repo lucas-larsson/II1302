@@ -350,4 +350,27 @@ MigrationBackup/
 .ionide/
 /firebaseConfig.ts
 
+
 .DS_Store
+node_modules
+npm-debug.log
+
+# WebStorm project files
+.idea
+*.iml
+*.iws
+*.ipr
+
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+
+
+# vscode project settings
+/.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
