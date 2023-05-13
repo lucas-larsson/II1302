@@ -1,6 +1,7 @@
 const { errorCodes } = require('../errorcodes');
 const { plantsDAO } = require('./plantsDAO');
 const { postRequest } = require('../request');
+const { firebase } = require('../../utils/firebase');
 
 const initLocals = (req, res, next) => {
   res.locals = {};
@@ -67,11 +68,9 @@ const updatePlantData = async (req, res, next) => {
 const waterPlant = async (req, res, next) => {
   const { iot_device_id } = req.body;
   try {
-    const response = await postRequest(true);
-    if (response.statusText === 'success') {
-      res.locals.outData = await plantsDAO.waterPlant(response);
-      next();
-    }
+    await firebase.waterPlant(iot_device_id);
+    res.locals.outData = req.body;
+    next();
   } catch (err) {
     console.error('Error in waterPlant: ', err.message);
     return next(

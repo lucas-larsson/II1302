@@ -17,7 +17,7 @@
 #define WIFI_SSID      "KTH-IoT"
 #define WIFI_PASSWORD  "H2Oasis12"
 #define API_KEY       "AIzaSyAMEovzq4Oki0_d53vcCxJ31MjbyimNHOM"  //"AIzaSyBh6kUYOBsEJ-fZxbeTRuKmZ26CfdXzn1M"
-#define DATABASE_URL  "https://h2oasis-14cd1-default-rtdb.europe-west1.firebasedatabase.app/"   //"https://testii1302-default-rtdb.europe-west1.firebasedatabase.app/"
+#define DATABASE_URL  "https://h2oasis-14cd1-default-rtdb.europe-west1.firebasedatabase.app/"   //"https://ii1302-384020-default-rtdb.europe-west1.firebasedatabase.app/"
 
 /* Pin connections */
 const int moistureSensorPin = 33;

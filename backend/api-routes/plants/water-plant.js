@@ -30,7 +30,7 @@ module.exports.post.apiDoc = {
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/PlantData',
+            $ref: '#/components/schemas/WaterCommand',
           },
         },
       },
