@@ -22,8 +22,9 @@ const updatePlantData = async function (device_id, moisture_level, last_watered,
   }
 };
 
+// TODO: Maybe remove
 const waterPlant = async function (deviceData) {
-  return await updatePlantData(...deviceData);
+  return await updatePlantData(deviceData.iot_device_id, deviceData.time, deviceData.person_id);
 };
 
 const iotExistsByDeviceId = async (device_id) => {
