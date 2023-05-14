@@ -1,6 +1,5 @@
 const { errorCodes } = require('../errorcodes');
 const { plantsDAO } = require('./plantsDAO');
-const { postRequest } = require('../request');
 const { firebase } = require('../../utils/firebase');
 
 const initLocals = (req, res, next) => {
