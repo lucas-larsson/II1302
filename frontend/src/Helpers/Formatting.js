@@ -16,7 +16,7 @@ function containsNumber(inputString) {
     return regex.test(email);
   }
   function formatDateFromData(date){
-
+ 
     return date.toLocaleString("en-US", {
       year: "numeric",
       month: "long",
