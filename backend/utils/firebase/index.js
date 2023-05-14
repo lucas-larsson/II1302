@@ -57,24 +57,14 @@ const waterPlant = async (plant_id) => {
   return await updateData(`plants/${plant_id}`, { shower: true });
 };
 
-const updateSettings = async (plant_id, settings) => {
+const setPlantSettings = async (plant_id, settings) => {
   return await updateData(`plants/${plant_id}`, { settings: settings });
 };
-
-const settings = {
-  threshold: 25,
-  automatic_mode: true,
-};
-
-// writeData('plants/123', { shower: true, settings: settings });
-
-// waterPlant('123');
-// updateSettings('123', settings);
 
 module.exports = {
   firebase: {
     connect,
     waterPlant,
-    updateSettings,
+    setPlantSettings,
   },
 };

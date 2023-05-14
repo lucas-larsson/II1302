@@ -32,6 +32,11 @@ module.exports = {
       $ref: '#/components/schemas/ErrorCode',
     },
   },
+  PumpMode: {
+    type: 'string',
+    enum: ['auto', 'manual'],
+    example: 'auto',
+  },
   PersonalNumber: {
     type: 'string',
     pattern: '^[0-9]{8}-[0-9]{4}$',
@@ -346,6 +351,47 @@ module.exports = {
       },
       person_id: {
         $ref: '#/components/schemas/GenericId',
+      },
+    },
+  },
+  PlantSettings: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['iot_device_id', 'moist_threshold', 'automatic_mode', 'session_id', 'person_id'],
+    properties: {
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      moist_threshold: {
+        type: 'integer',
+      },
+      automatic_mode: {
+        type: 'boolean',
+      },
+      session_id: {
+        $ref: '#/components/schemas/Uuid',
+      },
+    },
+  },
+  PlantSettingsResponse: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['iot_device_id', 'moist_threshold', 'automatic_mode', 'person_id'],
+    properties: {
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      moist_threshold: {
+        type: 'integer',
+      },
+      automatic_mode: {
+        type: 'boolean',
       },
     },
   },

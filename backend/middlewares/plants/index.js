@@ -113,6 +113,25 @@ const getPlantDataWithDate = async (req, res, next) => {
   }
 };
 
+const setPlantSettings = async (req, res, next) => {
+  const { iot_device_id, moist_threshold, automatic_mode } = req.body;
+  try {
+    res.locals.outData = await firebase.setPlantSettings(iot_device_id, {
+      moist_threshold,
+      automatic_mode,
+    });
+    return next();
+  } catch (e) {
+    console.error('Error in setPlantSettings: ', e.message);
+    return next(
+      errorCodes.serverError({
+        req,
+        message: 'Could not set plant settings',
+      })
+    );
+  }
+};
+
 module.exports = {
   initLocals,
   iotExists,
@@ -121,4 +140,5 @@ module.exports = {
   iotExistsByDeviceId,
   getPlantData,
   getPlantDataWithDate,
+  setPlantSettings,
 };

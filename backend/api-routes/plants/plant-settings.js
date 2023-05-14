@@ -1,11 +1,12 @@
 const plants = require('../../middlewares/plants'),
   responseMiddleware = require('../../middlewares/response'),
   auth = require('../../middlewares/auth');
+
 module.exports = {
   post: [
     plants.initLocals,
     auth.authorizeSession,
-    plants.getPlantDataWithDate,
+    plants.setPlantSettings,
     responseMiddleware.sendResponse(201, 'outData'),
   ],
 };
@@ -18,18 +19,18 @@ module.exports.post.apiDoc = {
     content: {
       'application/json': {
         schema: {
-          $ref: '#/components/schemas/PlantDateInformation',
+          $ref: '#/components/schemas/PlantSettings',
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Successfully updated plant data',
+      description: 'Successfully set plant settings',
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/PlantData',
+            $ref: '#/components/schemas/PlantSettingsResponse',
           },
         },
       },
