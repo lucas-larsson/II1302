@@ -4,22 +4,71 @@ import { formatDateFromData } from '../Helpers/Formatting';
 import { useSelector } from 'react-redux';
 import { RootState } from "../store/store";
 import URL from '../API';
+import { stat } from 'fs';
+import { TIMEOUT } from 'dns';
+import { text } from 'stream/consumers';
+import FrontPageLoadingView from '../View/FrontPageLoadingView';
 
 function FrontPagePresenter() {
     const [lastWatered, setLastWatered] = useState<string>("Never");
     const [moistureLevel, setMoistureLevel] = useState<number>(0);
+    const [currentMoistureLevel, setCurrentMoistureLevel] = useState<number>(0);
     const user = useSelector((state: RootState) => state.auth.user);
     const session = useSelector((state: RootState) => state.auth.session);
     const sessionId = session ? session.session_id : '';
-    
+    const [statusMessage, setStatusMessage] = useState<string>("");
+    const [isAutomaticWatering, setAutomaticWatering] = useState<boolean>(false);
+    const [loaded, setLoaded] = useState<boolean>(false)
+    const [loadError, setLoadError] = useState<string>("");
 
     useEffect(()=>{
       getPlantData();
     },[])
 
-    async function setIOTDeviceMoistureLevel(newLevel:number){
-      console.log("This will send a request to API endpoint to change the minimum moisture level for automatic watering");
+    const [settingsInitialized, setSettingsInitialized] = useState(false);
+
+    useEffect(() => {
+      if (settingsInitialized) {
+        setSettings();
+      } else {
+        setSettingsInitialized(true);
+      }
+    }, [currentMoistureLevel, isAutomaticWatering]);
+    
+
+    async function setSettings() {
+      try {
+        const response = await fetch(`${URL}plants/plant-settings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            person_id: session?.person_id,
+            iot_device_id: 123,
+            moist_threshold: currentMoistureLevel,
+            automatic_mode: isAutomaticWatering,
+            session_id: sessionId
+          }),
+        });
+    
+        if (!response.ok) {
+          showStatusMessage("Error occurred, check your connection to device. " + "(" +response.status + ")");
+          return;
+        }else {
+          console.log("Updated settings successfully");
+        }
+    
+        showStatusMessage("Updated settings successfully!");
+        await getPlantData();
+    
+      } catch (error) {
+        if (error instanceof Error){
+          console.log(error);
+        }
+      }
     }
+    
 
     async function waterPlant(){
       try {
@@ -40,18 +89,31 @@ function FrontPagePresenter() {
         });
     
         if (!response.ok) {
+          showStatusMessage("Error occurred, check your connection to device. " + "(" + response.status+")");
           throw new Error(`Error: ${response.statusText}`);
         }
     
         console.log("Watered plant successfully " + response.json);
+        
+        showStatusMessage("Watered plant successfully!");
         await getPlantData();
-    
+        
         return response.json();
       } catch (error) {
         if (error instanceof Error) {
           console.log(error.message);
         }
       }
+    }
+    async function showStatusMessage(text:string) {
+      setStatusMessage(text);
+      setTimeout(() =>{setStatusMessage("")}, 5000);
+    }
+    function toggleAutomaticWateringCb(){
+      setAutomaticWatering(!isAutomaticWatering);
+    }
+    function setCurrentMoistureLevelCb(number:number){
+      setCurrentMoistureLevel(number);
     }
 
     async function getPlantData(){
@@ -73,13 +135,10 @@ function FrontPagePresenter() {
           let errorText = "";
     
           switch (response.status) {
-            case 400:
-              errorText = "No clue what this error means 400";
-              break;
             default:
               errorText = `An error occurred: ${response.statusText}`;
           }
-    
+          setLoadError("" + response.status);
           throw new Error(errorText);
         }
     
@@ -87,6 +146,8 @@ function FrontPagePresenter() {
         const formattedDateString = formatDateFromData(new Date(data.last_watered));
         setLastWatered(formattedDateString);
         setMoistureLevel(data.moisture_level);
+        setCurrentMoistureLevel(data.iot_settings.moist_threshold);
+        setLoaded(true);
         console.log(data);
       } catch (error) {
         if (error instanceof Error) {
@@ -95,8 +156,11 @@ function FrontPagePresenter() {
       }
     }
 
+  if(!loaded){
+    return (<FrontPageLoadingView errorMsg={loadError}></FrontPageLoadingView>)
+  }
   //All logic will be computed here and then sent to the view via the use of props
-  return <FrontPageView waterPlant={waterPlant} lastWatered={lastWatered} moistureLevel={moistureLevel} setIOTDeviceMoistureLevel={setIOTDeviceMoistureLevel}></FrontPageView>;
+  return (<FrontPageView isAutomaticWatering = {isAutomaticWatering} toggleAutomaticWatering={toggleAutomaticWateringCb} statusMessage={statusMessage} waterPlant={waterPlant} lastWatered={lastWatered} currentMoistureLevel={currentMoistureLevel} moistureLevel={moistureLevel} setIOTDeviceMoistureLevel={setCurrentMoistureLevelCb}></FrontPageView>);
 }
 
 export default FrontPagePresenter;

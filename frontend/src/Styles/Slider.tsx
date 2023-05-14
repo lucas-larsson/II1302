@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const SliderStyled = styled.input`
@@ -26,11 +26,17 @@ const SliderValue = styled.span`
 `;
 
 interface Props {
+  startValue:number;
   setMoisture: (value: number) => void;
 }
 
 export default function Slider(props: Props) {
-  const [sliderValue, setSliderValue] = useState(50);
+  const [sliderValue, setSliderValue] = useState(0);
+
+  useEffect(() => {
+    setSliderValue(props.startValue);
+  }, [props.startValue]);
+  
 
   function updateMinMoistureCB(e: React.ChangeEvent<HTMLInputElement>) {
     const value = parseInt(e.target.value);
