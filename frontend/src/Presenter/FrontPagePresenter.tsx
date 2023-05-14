@@ -4,9 +4,6 @@ import { formatDateFromData } from '../Helpers/Formatting';
 import { useSelector } from 'react-redux';
 import { RootState } from "../store/store";
 import URL from '../API';
-import { stat } from 'fs';
-import { TIMEOUT } from 'dns';
-import { text } from 'stream/consumers';
 import FrontPageLoadingView from '../View/FrontPageLoadingView';
 
 function FrontPagePresenter() {
