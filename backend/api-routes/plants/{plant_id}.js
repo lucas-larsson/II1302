@@ -6,6 +6,7 @@ module.exports = {
     plants.initLocals,
     plants.iotExistsByDeviceId,
     plants.getPlantData,
+    plants.getPlantSettings,
     responseMiddleware.sendResponse(200, 'outData'),
   ],
 };
@@ -18,7 +19,7 @@ module.exports.get.apiDoc = {
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/PlantData',
+            $ref: '#/components/schemas/PlantDataResponse',
           },
         },
       },

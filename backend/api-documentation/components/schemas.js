@@ -32,6 +32,11 @@ module.exports = {
       $ref: '#/components/schemas/ErrorCode',
     },
   },
+  PumpMode: {
+    type: 'string',
+    enum: ['auto', 'manual'],
+    example: 'auto',
+  },
   PersonalNumber: {
     type: 'string',
     pattern: '^[0-9]{8}-[0-9]{4}$',
@@ -255,6 +260,46 @@ module.exports = {
       },
     },
   },
+  IOTDeviceSettings: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['automatic_mode', 'water_threshold'],
+    properties: {
+      automatic_mode: {
+        type: 'boolean',
+        example: true,
+      },
+      water_threshold: {
+        type: 'integer',
+        example: 1,
+        minimum: 1,
+      },
+    },
+  },
+  PlantDataResponse: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['iot_device_id', 'moisture_level', 'last_watered', 'person_id'],
+    properties: {
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      moisture_level: {
+        type: 'integer',
+        example: 1,
+        minimum: 1,
+      },
+      last_watered: {
+        $ref: '#/components/schemas/DateTime',
+      },
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      iot_settings: {
+        $ref: '#/components/schemas/IOTDeviceSettings',
+      },
+    },
+  },
   WaterCommand: {
     type: 'object',
     additionalProperties: false,
@@ -346,6 +391,47 @@ module.exports = {
       },
       person_id: {
         $ref: '#/components/schemas/GenericId',
+      },
+    },
+  },
+  PlantSettings: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['iot_device_id', 'moist_threshold', 'automatic_mode', 'session_id', 'person_id'],
+    properties: {
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      moist_threshold: {
+        type: 'integer',
+      },
+      automatic_mode: {
+        type: 'boolean',
+      },
+      session_id: {
+        $ref: '#/components/schemas/Uuid',
+      },
+    },
+  },
+  PlantSettingsResponse: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['iot_device_id', 'moist_threshold', 'automatic_mode', 'person_id'],
+    properties: {
+      person_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      iot_device_id: {
+        $ref: '#/components/schemas/GenericId',
+      },
+      moist_threshold: {
+        type: 'integer',
+      },
+      automatic_mode: {
+        type: 'boolean',
       },
     },
   },

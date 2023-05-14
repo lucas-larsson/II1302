@@ -6,7 +6,7 @@ module.exports = {
   post: [
     plants.initLocals,
     auth.authorizeSession,
-    plants.waterPlant,
+    plants.setPlantSettings,
     responseMiddleware.sendResponse(201, 'outData'),
   ],
 };
@@ -19,18 +19,18 @@ module.exports.post.apiDoc = {
     content: {
       'application/json': {
         schema: {
-          $ref: '#/components/schemas/WaterCommand',
+          $ref: '#/components/schemas/PlantSettings',
         },
       },
     },
   },
   responses: {
     201: {
-      description: 'Successfully watered plant',
+      description: 'Successfully set plant settings',
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/WaterCommand',
+            $ref: '#/components/schemas/PlantSettingsResponse',
           },
         },
       },

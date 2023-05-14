@@ -1,6 +1,6 @@
 const { errorCodes } = require('../errorcodes');
 const { plantsDAO } = require('./plantsDAO');
-const { postRequest } = require('../request');
+const { firebase } = require('../../utils/firebase');
 
 const initLocals = (req, res, next) => {
   res.locals = {};
@@ -67,11 +67,9 @@ const updatePlantData = async (req, res, next) => {
 const waterPlant = async (req, res, next) => {
   const { iot_device_id } = req.body;
   try {
-    const response = await postRequest(true);
-    if (response.statusText === 'success') {
-      res.locals.outData = await plantsDAO.waterPlant(response);
-      next();
-    }
+    await firebase.waterPlant(iot_device_id);
+    res.locals.outData = req.body;
+    next();
   } catch (err) {
     console.error('Error in waterPlant: ', err.message);
     return next(
@@ -115,6 +113,41 @@ const getPlantDataWithDate = async (req, res, next) => {
   }
 };
 
+const setPlantSettings = async (req, res, next) => {
+  const { iot_device_id, moist_threshold, automatic_mode } = req.body;
+  try {
+    res.locals.outData = await firebase.setPlantSettings(iot_device_id, {
+      moist_threshold,
+      automatic_mode,
+    });
+    return next();
+  } catch (e) {
+    console.error('Error in setPlantSettings: ', e.message);
+    return next(
+      errorCodes.serverError({
+        req,
+        message: 'Could not set plant settings',
+      })
+    );
+  }
+};
+
+const getPlantSettings = async (req, res, next) => {
+  const { plant_id } = req.params;
+  try {
+    res.locals.outData.iot_settings = await firebase.getPlantSettings(plant_id);
+    return next();
+  } catch (e) {
+    console.error('Error in getPlantSettings: ', e.message);
+    return next(
+      errorCodes.serverError({
+        req,
+        message: 'Could not get plant settings',
+      })
+    );
+  }
+};
+
 module.exports = {
   initLocals,
   iotExists,
@@ -123,4 +156,6 @@ module.exports = {
   iotExistsByDeviceId,
   getPlantData,
   getPlantDataWithDate,
+  setPlantSettings,
+  getPlantSettings,
 };
