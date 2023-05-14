@@ -1,11 +1,9 @@
 const { sendQuery } = require('../../utils/dbIntegration/dbConfig');
 
 const iotExists = async function (device_id, device_password) {
-  console.log('device_id: ', device_id, 'device_password: ', device_password);
   const query = `SELECT * FROM iot_auth WHERE device_id = $1 AND device_password = $2`;
   try {
     const result = await sendQuery(query, [device_id, device_password]);
-    console.log('result.rows: ', result.rows);
     return result.rows[0];
   } catch (err) {
     throw err;
@@ -28,11 +26,9 @@ const waterPlant = async function (deviceData) {
 };
 
 const iotExistsByDeviceId = async (device_id) => {
-  console.log('device_id: ', device_id);
   const query = `SELECT * FROM iot_auth WHERE device_id = $1`;
   try {
     const result = await sendQuery(query, [device_id]);
-    console.log('result.rows[0].length: ', result.rows.length);
     return !!result.rows.length;
   } catch (err) {
     throw err;

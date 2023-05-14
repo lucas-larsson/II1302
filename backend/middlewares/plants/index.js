@@ -132,6 +132,22 @@ const setPlantSettings = async (req, res, next) => {
   }
 };
 
+const getPlantSettings = async (req, res, next) => {
+  const { plant_id } = req.params;
+  try {
+    res.locals.outData.iot_settings = await firebase.getPlantSettings(plant_id);
+    return next();
+  } catch (e) {
+    console.error('Error in getPlantSettings: ', e.message);
+    return next(
+      errorCodes.serverError({
+        req,
+        message: 'Could not get plant settings',
+      })
+    );
+  }
+};
+
 module.exports = {
   initLocals,
   iotExists,
@@ -141,4 +157,5 @@ module.exports = {
   getPlantData,
   getPlantDataWithDate,
   setPlantSettings,
+  getPlantSettings,
 };

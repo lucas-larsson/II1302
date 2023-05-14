@@ -1,7 +1,6 @@
 const admin = require('firebase-admin');
 
 const serviceAccount = require('../../serviceAccountKey.json');
-console.log('FB serviceAccount', serviceAccount);
 const RTDB_URL = process.env.RTDB_URL;
 
 admin.initializeApp({
@@ -61,10 +60,15 @@ const setPlantSettings = async (plant_id, settings) => {
   return await updateData(`plants/${plant_id}`, { settings: settings });
 };
 
+const getPlantSettings = async (plant_id) => {
+  return await readData(`plants/${plant_id}/settings`);
+};
+
 module.exports = {
   firebase: {
     connect,
     waterPlant,
     setPlantSettings,
+    getPlantSettings,
   },
 };
