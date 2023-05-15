@@ -16,8 +16,8 @@
 /* Network connections */
 #define WIFI_SSID      "KTH-IoT"
 #define WIFI_PASSWORD  "H2Oasis12"
-#define API_KEY       "AIzaSyAMEovzq4Oki0_d53vcCxJ31MjbyimNHOM"  //"AIzaSyBh6kUYOBsEJ-fZxbeTRuKmZ26CfdXzn1M"
-#define DATABASE_URL  "https://h2oasis-14cd1-default-rtdb.europe-west1.firebasedatabase.app/"   //"https://ii1302-384020-default-rtdb.europe-west1.firebasedatabase.app/"
+#define API_KEY       "AIzaSyATxSYCpI4N6uzGUwcLEKWooLqcEsrQV-w"  //"AIzaSyBh6kUYOBsEJ-fZxbeTRuKmZ26CfdXzn1M"
+#define DATABASE_URL  "https://ii1302-384020-default-rtdb.europe-west1.firebasedatabase.app/"   //"https://testii1302-default-rtdb.europe-west1.firebasedatabase.app/"
 
 /* Pin connections */
 const int moistureSensorPin = 33;
@@ -36,21 +36,13 @@ int ldrData = 0;
 float voltage = 0.0;
 
 const char* apiURL = "https://ii1302-backend-wdsryxs5fa-lz.a.run.app/api/plants/update"; // API URL for ESP32 to send a post request to
-const char* espURLs = "http://192.16.146.162/settings"; // NOTICE!!! This is going to be used to send the POST request too.
-const char* espURLw = "http://192.16.146.162/shower"; // Send a post request to this URL to water the plant
 
 
-/* IoT Cloud */
-const char THING_ID[] = "d7a62a2c-9ad4-4443-8c7f-162bf6bb10da"; // Thing ID used to authenticate the connected device with cloud IoT
-const char DEVICE_ID[] = "264ca76b-f1d2-47ba-9379-4f34725035c8";  // Device ID which is connected with cloud IoT
-const char DEVICE_PSW[] = "E6KPUM47BNZ8RQWQHYQ3"; // Device secret password to connect with the device
-
- 
 /* origin setting on ESP32 */
 int threshold = 25;
 bool autoMode = false;
 bool waterBTN = false;
-  
+
 /*Upadeted variabels */
 
 /* Time related variabels */
@@ -71,20 +63,20 @@ WiFiClient client;
 HTTPClient http;
 
 
-void setup() 
+void setup()
 {
   Serial.begin(115200);
   //initProperties();
-  
+
   pinMode(LED_R, OUTPUT);
   pinMode(LED_G, OUTPUT);
   pinMode(LED_Y, OUTPUT);
   pinMode(pumpControlPin, OUTPUT);
   digitalWrite(pumpControlPin, LOW);
-  
+
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.println("Connecting to WiFi");
-  
+
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(300);
@@ -92,7 +84,7 @@ void setup()
   }
   Serial.println("Connected to WiFi with IP: ");
   Serial.println(WiFi.localIP());
-   
+
   /* Initialize Firebase */
   config.api_key = API_KEY;
   config.database_url = DATABASE_URL;
@@ -112,7 +104,7 @@ void setup()
 
 
   Serial.println("Timer set to 10 minutes (timerDelay variable), it will take 10 minutes before publishing the first reading.");
-  
+
 
   /* Initialize a NTPClient and to get time */
   timeClient.begin();
@@ -125,10 +117,10 @@ void setup()
   timeClient.setTimeOffset(14400);
 }
 
-void loop() 
+void loop()
 {
-  
- 
+
+
   if(Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 5000 || sendDataPrevMillis == 0))
   {
     Serial.println("");
@@ -137,7 +129,7 @@ void loop()
     Serial.println("----------------------------------------------");
     sendDataPrevMillis = millis();
 
-    if(Firebase.RTDB.getInt(&fbdo, "/DesiredMoistLevel/Threshold/"))
+    if(Firebase.RTDB.getInt(&fbdo, "/plants/123/settings/moist_threshold/"))
     {
       if(fbdo.dataType() == "int")
       {
@@ -150,7 +142,7 @@ void loop()
       }
     }
 
-    if(Firebase.RTDB.getBool(&fbdo, "/Mode/Automatic/"))
+    if(Firebase.RTDB.getBool(&fbdo, "/plants/123/settings/automatic_mode/"))
     {
       if(fbdo.dataType() == "boolean")
       {
@@ -164,7 +156,7 @@ void loop()
       }
     }
 
-    if(Firebase.RTDB.getBool(&fbdo, "/Shower/"))
+    if(Firebase.RTDB.getBool(&fbdo, "/plants/123/shower"))
     {
       if(fbdo.dataType() == "boolean")
       {
@@ -174,16 +166,16 @@ void loop()
         {
           waterPlant();
           waterBTN = false;
-          if(Firebase.RTDB.setBool(&fbdo, "/Shower/", waterBTN))
+          if(Firebase.RTDB.setBool(&fbdo, "/plants/123/shower/", waterBTN))
           {
-            Serial.print(" - successfully replenished soil moisture. shower set to: " + fbdo.dataPath());
+            Serial.print(" - successfully replenished soil moisture! Watering set to: " + fbdo.dataPath());
+            Serial.println(" " + fbdo.dataPath() + ": " + shower + " (" + fbdo.dataType() + ") ");
           }
           else
           {
             Serial.println("FAILED: " + fbdo.errorReason());
           }
         }
-        Serial.println(" " + fbdo.dataPath() + ": " + shower + " (" + fbdo.dataType() + ") ");
       }
       else
       {
@@ -194,20 +186,20 @@ void loop()
     Serial.println("");
   }
   /* Update current time and date */
-  while(!timeClient.update()) 
+  while(!timeClient.update())
   {
     timeClient.forceUpdate();
   }
   // The formattedDate comes with the following format:
   // 2018-05-28T16:00:13Z
   // We need to extract date and time
-  
- 
 
-  if ((millis() - lastTime) > timerDelay) 
-  { 
+
+
+  if ((millis() - lastTime) > timerDelay)
+  {
     digitalWrite(pumpControlPin, LOW);
-    waterBTN == false;   
+    waterBTN == false;
     int moistureLevel = readMoistureLevel();
     if( moistureLevel <= 20)
     {
@@ -230,7 +222,7 @@ void loop()
     }
     controlMotorPump(moistureLevel, threshold);
     updatePlantMoistureLevel(moistureLevel);
-    
+
     lastTime = millis();
   }
 }
@@ -251,26 +243,17 @@ void waterPlant()
     Serial.println("");
     return;
   }
-  /*
-  while (moistureLevel < 100)
+
+  while (moistureLevel < 80)
   {
     moistureLevel = readMoistureLevel();
     Serial.println("Shower in progress!");
     digitalWrite(pumpControlPin, HIGH);
   }
-  */
-  else
-  {
-  digitalWrite(pumpControlPin, HIGH); 
-  delay(1000);
-  digitalWrite(pumpControlPin, LOW);
-  Serial.println("Shower finished! soil moisture level suffucient!");
-  last_watered = timeClient.getFormattedDate();
-  }  
 }
 
 
-int readMoistureLevel() 
+int readMoistureLevel()
 {
   long sensorValue = analogRead(moistureSensorPin);
   int moistureLevel = map(sensorValue, 4095, 0, 0, 100);
@@ -282,7 +265,7 @@ int readMoistureLevel()
 }
 
 
-void controlMotorPump(int moistureLevel, int threshold) 
+void controlMotorPump(int moistureLevel, int threshold)
 {
   int plant_moist = threshold;
   if(autoMode == true)
@@ -293,9 +276,9 @@ void controlMotorPump(int moistureLevel, int threshold)
       while (true)
       {
         moistureLevel = readMoistureLevel();
-        
+
         digitalWrite(pumpControlPin, HIGH);
- 
+
         if(moistureLevel >= plant_moist)
         {
           digitalWrite(pumpControlPin, LOW);
@@ -310,13 +293,13 @@ void controlMotorPump(int moistureLevel, int threshold)
         delay(1000);
       }
     }
-    else 
+    else
     {
       Serial.println("Pump off");
       digitalWrite(pumpControlPin, LOW);
     }
   }
-  
+
   if(autoMode == false)
   {
     if(moistureLevel < plant_moist)
@@ -324,13 +307,13 @@ void controlMotorPump(int moistureLevel, int threshold)
       Serial.println("");
       Serial.println("----------------------------------------------");
       Serial.println("");
-      
-     
+
+
       Serial.print("SOIL IS DRY! PLEASE WATER THE PLANT!");
       Serial.println("");
       Serial.println("");
       Serial.println("----------------------------------------------");
-    
+
     }
     else
     {
@@ -340,18 +323,18 @@ void controlMotorPump(int moistureLevel, int threshold)
 }
 
 
-void updatePlantMoistureLevel(int moistureLevel) 
+void updatePlantMoistureLevel(int moistureLevel)
 {
-  if (WiFi.status()== WL_CONNECTED) 
+  if (WiFi.status()== WL_CONNECTED)
   {
- 
+
     // Create a JSON object
     StaticJsonDocument<200> jsonDoc;
     jsonDoc["moisture_level"] =  moistureLevel;
     jsonDoc["last_watered"] = last_watered;
     jsonDoc["iot_device_id"] = 123;
     jsonDoc["iot_device_password"] = "password";
-   
+
 
     // Serialize the JSON object to a string
     String jsonString;
@@ -365,7 +348,7 @@ void updatePlantMoistureLevel(int moistureLevel)
     Serial.printf("HTTP response code: %d\n", httpResponseCode);
     String response = http.getString();
     Serial.println(response);
-  
+
     http.end();
   }
 }
