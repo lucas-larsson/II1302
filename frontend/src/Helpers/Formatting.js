@@ -16,7 +16,7 @@ function containsNumber(inputString) {
     return regex.test(email);
   }
   function formatDateFromData(date){
-
+ 
     return date.toLocaleString("en-US", {
       year: "numeric",
       month: "long",
@@ -27,7 +27,7 @@ function containsNumber(inputString) {
       timeZone: "UTC"
     });
   }
-
+ 
   function formatDateToData(date) {
     let formattedDate = date.toISOString().slice(0, 19).replace("T", " ") + ".000000";
     return formattedDate;

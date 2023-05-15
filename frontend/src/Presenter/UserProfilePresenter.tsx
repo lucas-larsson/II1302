@@ -26,7 +26,8 @@ export default function UserProfilePresenter() {
     const startDate = formatDateToData(twelveMonthsAgo); // replace with actual start date
     const personId = user?.person_id; // replace with actual person ID
     const sessionId = session?.session_id; // replace with actual person ID
-  
+    console.log(startDate)
+    console.log(endDate)
     try {
       const response = await fetch(
         `${URL}plants/plant-data`,

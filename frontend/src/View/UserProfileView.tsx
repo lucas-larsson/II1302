@@ -74,7 +74,7 @@ export default function UserProfileView({ plantData }: UserProfileViewProps) {
   }, [timePeriod, plantData]);
 
   useEffect(() => {
-    if (filteredData.length > 0) {
+    if (filteredData != null) {
       const mappedData = filteredData.map((plant, index) => (
         <DataBox key={index}>
           <DataEntry>IOT Device ID: {"[" + plant.device_id + "] "}</DataEntry>
@@ -114,7 +114,7 @@ export default function UserProfileView({ plantData }: UserProfileViewProps) {
               </> 
           ) 
           : (<ScrollBox>
-            {renderedData}</ScrollBox>
+            {filteredData.length > 0 ? renderedData : <DataEntry>No data found for this time period.</DataEntry>}</ScrollBox>
           )}
         </>
       ) : (
